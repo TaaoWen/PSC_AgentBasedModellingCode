@@ -1,0 +1,5 @@
+After the movement and eating of step 0, and the total amount stored by all the agents is 100.0
+After the movement and eating of step 1, and the total amount stored by all the agents is 200.0
+After the movement and eating of step 2, and the total amount stored by all the agents is 300.0
+After the movement and eating of step 3, and the total amount stored by all the agents is 400.0
+After the movement and eating of step 4, and the total amount stored by all the agents is 500.0
