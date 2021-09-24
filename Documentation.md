@@ -178,7 +178,7 @@ matplotlib.pyplot.show()
 
 Then, we can obtain the agent with the largest `x` (furthest east) shown as the **red** point in this figure, which is different from other black points. 
 
-<img src="D:\PSC\Assignment1\PSC_AgentBasedModellingCode\testfigure\largest_y.png" alt="largest_y" style="zoom:72%;" />
+<img src="testfigure/largest_y.png" alt="largest_y" style="zoom:72%;" />
 
 ## Third module -- Code shrinking II
 
@@ -521,7 +521,7 @@ matplotlib.pyplot.show()
 
 When the list of the number of agents is `num_of_agents_list = [10,20,50,100,200,500,1000,2000,4000]`, the figure is shown below. We can find the timing for `calculate_distance_0` is the largest. The timing for `calculate_distance_1` and `calculate_distance_2` are very close, but they are both much shorter than the timing for `calculate_distance_0` (half of `calculate_distance_0` timing), because they do not repeat to calculate the distance. The difference  is the largest. The timing for `calculate_distance_0` is so large when `num_of_agents = 4000` that the difference of other timing cannot be found in this figure. However, the timing for `calculate_distance_1` and `calculate_distance_2` is different.
 
-<img src="D:\PSC\Assignment1\PSC_AgentBasedModellingCode\testfigure\timingForAgents.png" alt="timingForAgents" style="zoom:72%;" />
+<img src="testfigure/timingForAgents.png" alt="timingForAgents" style="zoom:72%;" />
 
 
 
@@ -569,7 +569,7 @@ matplotlib.pyplot.show()
 
 The figure is shown below, and we can find the environment can be inputted from the `.txt` file successfully.
 
-<img src="D:\PSC\Assignment1\PSC_AgentBasedModellingCode\testfigure\environment.png" alt="environment" style="zoom:72%;" />
+<img src="testfigure/environment.png" alt="environment" style="zoom:72%;" />
 
 ---
 
@@ -587,7 +587,7 @@ matplotlib.pyplot.show()
 
 The output is shown below, where agents are shown as red points in the environment.
 
-<img src="D:\PSC\Assignment1\PSC_AgentBasedModellingCode\testfigure\environment_agents.png" alt="environment_agents" style="zoom:72%;" />
+<img src="testfigure/environment_agents.png" alt="environment_agents" style="zoom:72%;" />
 
 ---
 
@@ -735,7 +735,7 @@ ID = 9, x=78, y=11, store=30`
 
 We visualize the environment and agents together, then we can find that agents can wander around the full environment.
 
-<img src="D:\PSC\Assignment1\PSC_AgentBasedModellingCode\testfigure\environment_agents_size.png" alt="environment_agents_size" style="zoom:72%;" />
+<img src="testfigure/environment_agents_size.png" alt="environment_agents_size" style="zoom:72%;" />
 
 ---
 
@@ -1233,11 +1233,11 @@ Wolf 6 eated total 0 sheep`
 
 The position of all sheep and wolves are shown below. The living and dead sheep are represented by `blue` and `red` points. The living and dead wolves are represented by `black` and `yellow` points. There is no deal wolf, so there is no `yellow` point. We will further test it in a large number of `num_of_iterations`.
 
-<img src="D:\PSC\Assignment1\PSC_AgentBasedModellingCode\testfigure\wolves.png" alt="wolves" style="zoom:72%;" />
+<img src="testfigure/wolves.png" alt="wolves" style="zoom:72%;" />
 
 For a large number of iteration `num_of_iterations = 100`, the figure is shown below. The dead wolves are represented by `yellow` points. We can easily find these dead sheep around wolves, and many new sheep and wolves born from the initial `num_of_agents = 10` sheep and initial `num_of_wolves = 5` wolves. With these living wolves, most sheep have been eaten (many `red` rather than `blue` points).
 
-<img src="D:\PSC\Assignment1\PSC_AgentBasedModellingCode\testfigure\wolves100.png" alt="wolves100" style="zoom:72%;" />
+<img src="testfigure/wolves100.png" alt="wolves100" style="zoom:72%;" />
 
 ## Ninth module -- GUI/Web scraping
 
@@ -1313,7 +1313,7 @@ tkinter.mainloop()
 
 GUI is shown below, so that our code is correct.
 
-<img src="D:\PSC\Assignment1\PSC_AgentBasedModellingCode\testfigure\GUI_design.png" alt="GUI_design" style="zoom:38%;" />
+<img src="testfigure/GUI_design.png" alt="GUI_design" style="zoom:38%;" />
 
 ---
 
