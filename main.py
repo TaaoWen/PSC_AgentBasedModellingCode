@@ -154,12 +154,13 @@ def calculate_distance_2(agents):
     return need_time, max_dis, min_dis
 
 
-# Parameter initializing
-random.seed(0)
+## Parameter initializing
 
 # Environment and other setting
-num_of_iterations = 100
+random.seed(0)
+num_of_iterations = 50
 environment = []
+
 # Sheep setting
 agents = []
 num_of_agents = 10
@@ -167,6 +168,7 @@ neighbourhood = 20
 times_for_move = 1.1
 born_iteration_sheep = 5
 new_sheep_partion = 0.2
+
 # Wolves setting
 wolves = []
 num_of_wolves = 5
@@ -303,6 +305,12 @@ for i in range(num_of_agents):
 # =============================================================================
 
 
+# =============================================================================
+# # =============================================================================
+# # # Code below is for Basic figures
+# # =============================================================================
+# =============================================================================
+
 for j in range(num_of_iterations):
 #    # Uncomment next line to randomise the order of agents
 #    random.shuffle(agents)
@@ -433,6 +441,11 @@ matplotlib.pyplot.show()
 #     print(sorted_agents[i])
 # =============================================================================
 
+# =============================================================================
+# # =============================================================================
+# # # Code above is for Basic figures
+# # =============================================================================
+# =============================================================================
 
 
 
@@ -440,17 +453,24 @@ matplotlib.pyplot.show()
 
 # =============================================================================
 # # =============================================================================
-# # # Animation
+# # # Code below is for Animation
 # # =============================================================================
+# =============================================================================
+    
+# =============================================================================
 # # Figure initializing
 # fig = matplotlib.pyplot.figure(figsize=(7, 7))
 # ax = fig.add_axes([0, 0, 1, 1])
 # 
 # carry_on = True	
+# jIteration = 0
 # 
 # def update(frame_number):
 #     
 #     fig.clear()   
+#     global jIteration
+#     global num_of_agents
+#     global num_of_wolves
 #     global carry_on
 #     
 #     # Plot the environment
@@ -465,18 +485,73 @@ matplotlib.pyplot.show()
 #     store_average = store_total/num_of_agents
 #     
 #     for i in range(num_of_agents):
-#         agents[i].move(times_for_move,store_average)
-#         agents[i].eat()
-#         agents[i].share_with_neighbours(neighbourhood)
+#         if agents[i].state == 1:
+#             agents[i].move(times_for_move,store_average)
+#             agents[i].eat()
+#             agents[i].share_with_neighbours(neighbourhood)
+#             
+#     # Move the wolves
+#     for i in range(num_of_wolves):
+#         # If eat more than 'wolves_dead_criterion' sheep, this wolf will die
+#         if wolves[i].eatSheep >= wolves_dead_criterion:
+#             wolves[i].state = 0
+#         
+#         # Wolf eats and moves
+#         if wolves[i].state == 1:
+#             wolves[i].move(unit_step_wovle)
+#             wolves[i].find_eat(required_distance)
+#     
+#     # New sheep born
+#     if (jIteration + 1) % born_iteration_sheep == 0:
+#         # Measure the living sheep
+#         alive_number = 0
+#         for i in range(num_of_agents):
+#             if agents[i].state == 1:
+#                 alive_number += 1
+#         # new_number is the new sheep born from the living sheep (rounding)
+#         add_number = round(new_sheep_partion * alive_number)
+#         new_num_of_agents = num_of_agents + add_number
+#         # make the sheep
+#         for i in range(num_of_agents,new_num_of_agents,1):
+#             agents.append(agentframework.Agent(environment,agents,i))
+#         num_of_agents = new_num_of_agents
+# #        print("Current total number of sheep is",num_of_agents)
+#     
+#     # New wolves born
+#     if (jIteration + 1) % born_iteration_wolves == 0:
+#         # Measure the living sheep
+#         alive_number = 0
+#         for i in range(num_of_wolves):
+#             if wolves[i].state == 1:
+#                 alive_number += 1
+#         # new_number is the new sheep born from the living sheep (rounding)
+#         add_number = round(new_wolves_partion * alive_number)
+#         new_num_of_wolves = num_of_wolves + add_number
+#         # make the wolves
+#         for i in range(num_of_wolves,new_num_of_wolves,1):
+#             wolves.append(agentframework.Wolves(wolves,agents,environment,i))
+#         num_of_wolves = new_num_of_wolves
+# #        print("Current total number of wolves is",num_of_wolves)
+#     
+#     jIteration += 1
 #     
 #     # Stop condiction based on a random number
-#     if random.random() < 0.01:
+#     if random.random() < 0.001:
 #         carry_on = False
 #         print("stopping condition")
 #     
 #     # Plot the agent
 #     for i in range(num_of_agents):
-#         matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'red')
+#         if agents[i].state == 1:
+#             matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'blue')
+#         else:
+#             matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'red')
+#     for i in range(num_of_wolves):
+#         if wolves[i].state == 1:
+#             matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'black')
+#         else:
+#             matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'yellow')
+# 
 # 		
 # # Stop condition: (1) Step number (2) Random number
 # def gen_function(b = [0]):
@@ -492,14 +567,27 @@ matplotlib.pyplot.show()
 # matplotlib.pyplot.show()
 # =============================================================================
 
+# =============================================================================
+# # =============================================================================
+# # # =============================================================================
+# # # # Code above is for Animation
+# # # =============================================================================
+# # =============================================================================
+
+
+
+
 
 
 
 
 # =============================================================================
 # # =============================================================================
-# # # GUI Setting
+# # # Code below is for GUI Setting
 # # =============================================================================
+# =============================================================================
+    
+# =============================================================================
 # # Define the run function
 # def run():
 #     animation = matplotlib.animation.FuncAnimation(fig, update, frames=gen_function, repeat=False)
@@ -523,9 +611,13 @@ matplotlib.pyplot.show()
 # 
 # # Update rule 
 # carry_on = True	
+# jIteration = 0
 # def update(frame_number):
 #     
 #     fig.clear()   
+#     global jIteration
+#     global num_of_agents
+#     global num_of_wolves
 #     global carry_on
 #     
 #     # Plot the environment
@@ -539,18 +631,73 @@ matplotlib.pyplot.show()
 #         store_total += agents[i].store
 #     store_average = store_total/num_of_agents
 #     for i in range(num_of_agents):
-#         agents[i].move(times_for_move,store_average)
-#         agents[i].eat()
-#         agents[i].share_with_neighbours(neighbourhood)
+#         if agents[i].state == 1:
+#             agents[i].move(times_for_move,store_average)
+#             agents[i].eat()
+#             agents[i].share_with_neighbours(neighbourhood)
+#     
+#     # Move the wolves
+#     for i in range(num_of_wolves):
+#         # If eat more than 'wolves_dead_criterion' sheep, this wolf will die
+#         if wolves[i].eatSheep >= wolves_dead_criterion:
+#             wolves[i].state = 0
+#         
+#         # Wolf eats and moves
+#         if wolves[i].state == 1:
+#             wolves[i].move(unit_step_wovle)
+#             wolves[i].find_eat(required_distance)
+#     
+#     # New sheep born
+#     if (jIteration + 1) % born_iteration_sheep == 0:
+#         # Measure the living sheep
+#         alive_number = 0
+#         for i in range(num_of_agents):
+#             if agents[i].state == 1:
+#                 alive_number += 1
+#         # new_number is the new sheep born from the living sheep (rounding)
+#         add_number = round(new_sheep_partion * alive_number)
+#         new_num_of_agents = num_of_agents + add_number
+#         # make the sheep
+#         for i in range(num_of_agents,new_num_of_agents,1):
+#             agents.append(agentframework.Agent(environment,agents,i))
+#         num_of_agents = new_num_of_agents
+# #        print("Current total number of sheep is",num_of_agents)
+#     
+#     # New wolves born
+#     if (jIteration + 1) % born_iteration_wolves == 0:
+#         # Measure the living sheep
+#         alive_number = 0
+#         for i in range(num_of_wolves):
+#             if wolves[i].state == 1:
+#                 alive_number += 1
+#         # new_number is the new sheep born from the living sheep (rounding)
+#         add_number = round(new_wolves_partion * alive_number)
+#         new_num_of_wolves = num_of_wolves + add_number
+#         # make the wolves
+#         for i in range(num_of_wolves,new_num_of_wolves,1):
+#             wolves.append(agentframework.Wolves(wolves,agents,environment,i))
+#         num_of_wolves = new_num_of_wolves
+# #        print("Current total number of wolves is",num_of_wolves)
+#     
+#     jIteration += 1
 #     
 #     # Stop condiction based on a random number
-#     if random.random() < 0.1:
+#     if random.random() < 0.001:
 #         carry_on = False
 #         print("stopping condition")
 #     
 #     # Plot the agent
 #     for i in range(num_of_agents):
-#         matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'red')
+#         if agents[i].state == 1:
+#             matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'blue')
+#         else:
+#             matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'red')
+#     for i in range(num_of_wolves):
+#         if wolves[i].state == 1:
+#             matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'black')
+#         else:
+#             matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'yellow')
+# 
 # 		
 # # Stop condition: (1) Step number (2) Random number
 # def gen_function(b = [0]):
@@ -562,3 +709,10 @@ matplotlib.pyplot.show()
 # 
 # tkinter.mainloop()
 # =============================================================================
+
+# =============================================================================
+# # =============================================================================
+# # # =============================================================================
+# # # # Code above is for GUI Setting
+# # # =============================================================================
+# # =============================================================================
