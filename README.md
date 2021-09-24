@@ -182,8 +182,6 @@ Then, we can obtain the agent with the largest `x` (furthest east) shown as the 
 
 ## Third module -- Code shrinking II
 
-![A](https://github.com/TaaoWen/PSC_AgentBasedModellingCode/tree/main/testfigure/largest_y.png)
-
 **Test 1**: We want to use for-loops to reduce the code size, the initialization and movement of `num_of_agents` agents in `num_of_iterations` steps are shown below.
 
 ```python
