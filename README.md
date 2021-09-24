@@ -8,27 +8,38 @@ This code is only the practicals for the module "Programming for Social Science"
 
 ## Basic Introduction
 
-**A simple list of what all the files/directories are**
+**A simple list of what all the files/directories are:**
 
-There are 
+There are mainly two `*.py` files. The first one `main.py` contains the main program code, and the second one `agentframework.py` constructs the Agents class for sheep and wolves, as well as their actions. `in.txt` provides the environment data. 
 
----
+Two output documents `output_environment.txt` and `output_store.txt` save the environment data after running the code and the total amount stored by all the agents at each step, respectively. 
 
-**The software is**
+Some figures obtained by testing are in `testfigure`.
 
-
-
----
-
-**How to run the software:**
-
-
+More information about this code can be found in `README.md`.
 
 ---
 
-**What to expect when it is run:**
+**The software is:**
 
+This software is designed to model different kinds of action of agents, including the birth, movement, eating, and sharing information with neighbors. The specifica information is shown below.
 
+1. There are initial number of sheep and wolves that can move randomly in the environment, but wolves move quicker than sheep. 
+2. Sheep have different movement speeds based on the store.  
+3. Sheep can eat the grass in the environment and wolves can eat sheep.
+4. Sheep can share the information/store with neighbor within a defined distance.
+5. Sheep and wolves have different birth rates.
+6. Sheep will die when they are eaten by wolves, and wolves will die when they eat a certain number of sheep.
+
+---
+
+**How to run the software and what to expect when it is run:**
+
+There are 3 parts in `main.py`. The initial parameter setting, function, and `Agents` class can be used in all 3 parts.
+
+1. **Basic figures**: Users only need to click 'Run files' or `F5` to run this part. Users can obtain the final figures that show the environment and positions of sheep and wolves (with different color).  Users can also obtain the environment after modelling and the total amount stored by all the agents at each step by uncommenting some lines, the specific information can be found in `main.py`.  
+2. **Animation**: Users only need to click 'Run files' or `F5` to run this part. Users can get a GIF of the agent moving in the environment. The figure will show the agent’s movement and state (live or death), as well as the amount of grass in each point.
+3. **GUI design**: Users only need to click 'Run files' to run this part. In GUI, users need to click 'Run model'. The same results in the 2nd part will be obtained.
 
 ---
 
@@ -40,13 +51,13 @@ There are no known issues now.
 
 **Testing done:**
 
-
+Almost all codes are tested, and all details can be found in the comment of `main.py` and `agentframework.py`.
 
 ---
 
 **Ideas for further development:**
 
-
+The movement and death model of agents can be further improved to make it more real.
 
 ## First module -- Agent Based Modelling
 
