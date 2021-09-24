@@ -14,37 +14,37 @@ There are
 
 ---
 
-**outline what the software is**
+**The software is**
 
 
 
 ---
 
-**how to run the software**
+**How to run the software:**
 
 
 
 ---
 
-**what to expect when it is run**
+**What to expect when it is run:**
 
 
 
 ---
 
-**outline any ‘known issues’**
+**Known issues:**
+
+There are no known issues now. 
+
+---
+
+**Testing done:**
 
 
 
 ---
 
-**outline any testing done**
-
-
-
----
-
-**may outline ideas for further development**
+**Ideas for further development:**
 
 
 
