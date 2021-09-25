@@ -1,6 +1,8 @@
 # Programming for Social Science
 
-This code is only used as the practicals for the module "Programming for Social Science".
+This code is only used as the practicals (Agent Based Modelling) for the module "[Programming for Social Science](https://www.geog.leeds.ac.uk/courses/computing/study/core-python-phd/)". More information about this assessment can be found [here](https://www.geog.leeds.ac.uk/courses/computing/study/core-python-phd/assessment1/index.html).
+
+The website that introduces this code is [here](https://taaowen.github.io/ABM.html).
 
 [toc]
 
