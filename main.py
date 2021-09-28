@@ -162,28 +162,31 @@ def calculate_distance_2(agents):
 # # =============================================================================
 
 # Environment and other setting
-random.seed(0)
+random.seed(0) # This line can be removed for randomization
 
-num_of_iterations = 50
-environment = []
+num_of_iterations = 50 # Number of iterations
+environment = [] # List of environment that will be read later
 
 # Sheep setting
-agents = []
-num_of_agents = 10
-neighbourhood = 20
-times_for_move = 1.1
-born_iteration_sheep = 5
-new_sheep_partion = 0.2
+agents = [] # List of agents that will be given later
+num_of_agents = 10 # Number of agents
+neighbourhood = 20 # Agents share store with neighbor agents within this distance "neighbourhood"
+times_for_move = 1.1 # Agents move quickly if their store is "times_for_move" times the average storage
+born_iteration_sheep = 5 # New agents are born every "born_iteration_sheep" iterations
+new_sheep_partion = 0.2 # The number of new sheep is "new_sheep_partion" of the number of alive sheep
 
 # Wolves setting
-wolves = []
-num_of_wolves = 5
-required_distance = 30
-unit_step_wovle = 5
-born_iteration_wolves = 10
-new_wolves_partion = 0.2
-wolves_dead_criterion = 5
+wolves = [] # List of agents that will be given later
+num_of_wolves = 5 # Number of wolves
+required_distance = 30 # Wolves eat sheep within this distance "required_distance"
+unit_step_wovle = 5 # The unit that the wolf moves at each iteration in each direction
+born_iteration_wolves = 10 # New wolves are born every "born_iteration_sheep" iterations
+new_wolves_partion = 0.2 # The number of new wolves is "new_wolves_partion" of the number of alive wolves
+wolves_dead_criterion = 5 # Wolves die when they eat "wolves_dead_criterion" sheep 
 
+# Living sheep are represented by blue points and dead sheep are represented by red points
+# Living wolves are represented by black points and dead wolves are represented by yellow points
+    
 
 # =============================================================================
 # # Uncomment next lines to read model parameters from the command line
@@ -425,6 +428,7 @@ for i in range(num_of_agents):
 #    # Uncomment next lines to print the state for all sheep at the end.
 #    print("The state for sheep", agents[i].ID, "is", agents[i].state)
     
+    # Living sheep are represented by blue points and dead sheep are represented by red points
     if agents[i].state == 1:
         matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'blue')
     else:
@@ -434,6 +438,7 @@ for i in range(num_of_wolves):
 #    # Uncomment next lines to print the state for all wolves at the end.
 #    print("Wolf", wolves[i].ID, "eated total", wolves[i].eatSheep, "sheep")
     
+    # Living wolves are represented by black points and dead wolves are represented by yellow points
     if wolves[i].state == 1:
         matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'black')
     else:
