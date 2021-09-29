@@ -34,15 +34,28 @@ This software is designed to model different kinds of action of agents, includin
 4. Sheep can share the information/store with neighbor within a defined distance.
 5. Sheep and wolves have different birth rates.
 
+The mathematic model of my code can be found in the submitted word file because it contains many equations.
+
 ---
 
 **How to run the software and what to expect when it is run:**
 
-There are 3 parts in `main.py`. The initial parameter setting, function, and `Agents` class can be used in all 3 parts.
+There are 4 parts in `main.py`. The initial parameter setting, function, and `Agents` class can be used in all 3 parts.
 
-1. **Basic figures**: Users only need to click 'Run files' or `F5` to run this part. Users can obtain the final visualized figure that shows the environment and positions of sheep and wolves (with different color). Users can also obtain the environment after modelling and the total amount stored by all the agents at each step in `.txt` files by uncommenting some lines based on the introduction in `main.py`.
-2. **Animation**: Users only need to click 'Run files' or `F5` to run this part. Users can get a GIF of agents (wolves and sheep) moving in the environment that shows agents’ movement and state, as well as the amount of grass in each point.
-3. **GUI design**: Users only need to click 'Run files' to run this part. The same results in "Animation" can be obtained, but users need to click 'Run model' in GUI.
+1. **Initial setting**: All initial information about agents and environment are set here and users do not need to change it if they want to use default value.
+2. **Basic figures**: Users only need to click 'Run files' or `F5` to run this part. Users can obtain the final visualized figure that shows the environment and positions of sheep and wolves (with different color). Users can also obtain the environment after modelling and the total amount stored by all the agents at each step in `.txt` files by uncommenting some lines based on the introduction in `main.py`. Please uncomment all codes between `Code below is for Basic figures` and `Code above is for Basic figures` when users want to run this part of code.
+3. **Animation**: Users only need to click 'Run files' or `F5` to run this part. Users can get a GIF of agents (wolves and sheep) moving in the environment that shows agents’ movement and state, as well as the amount of grass in each point. Please uncomment all codes between `Code below is for Animation` and `Code above is for Animation` when users want to run this part of code.
+4. **GUI design**: Users only need to click 'Run files' to run this part. The same results in "Animation" can be obtained, but users need to click 'Run model' in GUI. Please uncomment all codes between `Code below is for GUI Setting` and `Code above is for GUI Setting` when users want to run this part of code. In addition, users need to use `Tkinter` and can refer to this [introduction](https://www.geog.leeds.ac.uk/courses/computing/practicals/python/agent-framework/part9/index.html) to set.
+
+Please note that all tests are included in `main.py` and `agentframework.py` by commenting. Thus, users can uncomment specific lines to test whether the code can work normally based on the introduction in these files (test results are also given in this file). For example,
+
+1. Read model parameters from the command line;
+2. Visualize the environment data obtained from text file;
+3. Measure the distance between two agents by different functions defined in advance, and obtain the timings for different functions with different number of agents to visualize;
+4. Identify the agent with the largest x (furthest east);
+5. Print the position (and other information) of agents in each iteration;
+6. Write the environment data after eating and movement into text file;
+7. and others.
 
 ---
 
@@ -62,7 +75,7 @@ Almost all codes are tested, and all details can be found in the comment of `mai
 
 **Ideas for further development:**
 
-The movement and death model of agents can be further improved to make it more real.
+The mathematic model about the movement and dynamic of agents can be further improved.
 
 ## First module -- Agent Based Modelling
 
