@@ -8,6 +8,17 @@ This is the definition for Agents classes that are used in "main.py". More detai
 @Version: Final
 '''
 
+# =============================================================================
+# # ####################################Pay attention (Read before simulation)####################################
+# # Please use "Ctrl + 5" to remove the comments for code block surrounded by "==="
+# # Please use "Ctrl + 4" to comment in code block surrounded by "==="
+# # Please use "Ctrl + 1" to remove or add comments for multiple lines together
+# # It will be very troublesome and may introduce ERRORS if adding or removing "#" manually line by line!
+# # If there is any problem, please contact me via taaowen@gmail.com
+# # or read "http://e-callisto.org/cospar2018/SpyderKeyboardShortcutsEditor.pdf", the top of the 2nd page
+# =============================================================================
+
+
 import random
 
 # Definition of sheep
@@ -274,6 +285,7 @@ class Wolves():
                 if self.distance_between(agent) <= required_distance: # within the distance
                     self.eatSheep += 1 # This wolf eat sheep
                     agent.state = 0 # Sheep dies
+                    
 #                    # Uncomment next lines to show the distance between Wolf and sheep
 #                    print("Wolf: " + str(self.ID) \
 #                          + ", Sheep: " + str(agent.ID) \
