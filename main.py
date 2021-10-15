@@ -303,6 +303,7 @@ for i in range(num_of_agents):
     # Position is randomly given by default, you can also input the position of agents 
     # by using "agents.append(agentframework.Agent(environment,agents,i,ypos,xpos))"
     # where "ypos" and "xpos" are "float" that indicate the position of this agent
+    # More details can be found in the next code block 
     agents.append(agentframework.Agent(environment,agents,i))
 #    # Uncomment next line to print the initial position of all sheep
 #    print(agents[i])
@@ -351,49 +352,51 @@ for i in range(num_of_agents):
 # need_time2, max_dis2, min_dis2 = calculate_distance_2(agents)
 # =============================================================================
 
-## Uncomment next lines to obtain the timings for three function under different number of agents
-#num_of_agents_list = [10,20,50,100,200,500,1000,2000] # To test the timings for different number of agents
-## timing initializing
-#running_time0 = []
-#running_time1 = []
-#running_time2 = []
-#for num_of_agents in num_of_agents_list:
-#    # Print the current number of agents
-#    print("Now, the number of agents is", num_of_agents)
-#    agents = []
-#    # make the agents
-#    for i in range(num_of_agents):
-#        # Position is randomly given by default, you can input the position manually (refer to comments above)
-#        agents.append(agentframework.Agent(environment, agents, i))
-##        # Uncomment next line to print the initial position of all agents
-##        print(agents[i])
-#    
-#    # obtain the timings, the maximum distances, and the minimum distances from three functions
-#    need_time0, max_dis0, min_dis0 = calculate_distance_0(agents)
-#    running_time0.append(need_time0)
-#    need_time1, max_dis1, min_dis1 = calculate_distance_1(agents)
-#    running_time1.append(need_time1)
-#    need_time2, max_dis2, min_dis2 = calculate_distance_2(agents)
-#    running_time2.append(need_time2)
-#    
-## Calculate the maximum time it takes for any run, then set the axis limit
-#max_time = max(running_time0)
-#max_time = max(max_time, max(running_time1))
-#max_time = max(max_time, max(running_time2))
-## Set the axis limits
-#matplotlib.pyplot.ylim(0, 1.1 * max(num_of_agents_list))
-#matplotlib.pyplot.xlim(0, 1.1 * max_time)
-## visualize the timings obtained from different functions
-#for i in range(len(num_of_agents_list)):
-#    # Please note the color for each function
-#    matplotlib.pyplot.scatter(running_time0[i],num_of_agents_list[i], color="red")
-#    matplotlib.pyplot.scatter(running_time1[i],num_of_agents_list[i], color="black")
-#    matplotlib.pyplot.scatter(running_time2[i],num_of_agents_list[i], color="green")
-## name of label and legend
-#matplotlib.pyplot.xlabel("Timing")
-#matplotlib.pyplot.ylabel("Number of agents")
-#matplotlib.pyplot.legend(["Function0","Function1","Function2"])
-#matplotlib.pyplot.show() 
+# =============================================================================
+# # Uncomment next lines to obtain the timings for three function under different number of agents
+# num_of_agents_list = [10,20,50,100,200,500,1000,2000] # To test the timings for different number of agents
+# # timing initializing
+# running_time0 = []
+# running_time1 = []
+# running_time2 = []
+# for num_of_agents in num_of_agents_list:
+#     # Print the current number of agents
+#     print("Now, the number of agents is", num_of_agents)
+#     agents = []
+#     # make the agents
+#     for i in range(num_of_agents):
+#         # Position is randomly given by default, you can input the position manually (refer to comments above)
+#         agents.append(agentframework.Agent(environment, agents, i))
+# #        # Uncomment next line to print the initial position of all agents
+# #        print(agents[i])
+#     
+#     # obtain the timings, the maximum distances, and the minimum distances from three functions
+#     need_time0, max_dis0, min_dis0 = calculate_distance_0(agents)
+#     running_time0.append(need_time0)
+#     need_time1, max_dis1, min_dis1 = calculate_distance_1(agents)
+#     running_time1.append(need_time1)
+#     need_time2, max_dis2, min_dis2 = calculate_distance_2(agents)
+#     running_time2.append(need_time2)
+#     
+# # Calculate the maximum time it takes for any run, then set the axis limit
+# max_time = max(running_time0)
+# max_time = max(max_time, max(running_time1))
+# max_time = max(max_time, max(running_time2))
+# # Set the axis limits
+# matplotlib.pyplot.ylim(0, 1.1 * max(num_of_agents_list))
+# matplotlib.pyplot.xlim(0, 1.1 * max_time)
+# # visualize the timings obtained from different functions
+# for i in range(len(num_of_agents_list)):
+#     # Please note the color for each function
+#     matplotlib.pyplot.scatter(running_time0[i],num_of_agents_list[i], color="red")
+#     matplotlib.pyplot.scatter(running_time1[i],num_of_agents_list[i], color="black")
+#     matplotlib.pyplot.scatter(running_time2[i],num_of_agents_list[i], color="green")
+# # name of label and legend
+# matplotlib.pyplot.xlabel("Timing")
+# matplotlib.pyplot.ylabel("Number of agents")
+# matplotlib.pyplot.legend(["Function0","Function1","Function2"])
+# matplotlib.pyplot.show() 
+# =============================================================================
 
 # =============================================================================
 # # Uncomment next lines to test if each agent has the information of other agents.

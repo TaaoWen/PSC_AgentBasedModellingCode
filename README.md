@@ -8,11 +8,44 @@ The website that introduces this code is [here](https://taaowen.github.io/ABM.ht
 
 ---
 
+## Mathematic Model
+
+Before illustrating how to simulate, the mathematic model is introduced first. There are two types of species, that is, sheep $S = [s_1, s_2, ..., s_n]$ and wolves $W = [w_1,w_2,...,w_m]$, where the numbers of sheep and wolves are $n$ and $m$ respectively. All species are given in the environment ${E_{\left| N \right| \times \left| N \right|}} = \left[ {\begin{array}{*{20}{c}}
+{{e_{11}}}& \cdots & \cdots &{{e_{1\left| N \right|}}}\\
+ \vdots & \ddots & \cdots & \vdots \\
+ \vdots & \cdots &{{e_{ij}}}& \vdots \\
+{{e_{\left| N \right|1}}}& \cdots & \cdots &{{e_{\left| N \right|\left| N \right|}}}
+\end{array}} \right]$, where $e_{ij}$ represents the store of environment and the size of environment is $\left| N \right| \times \left| N \right|$. The details of our model are given below. (**All <u>*Options*</u> have been done in our code, but users need to uncomment specific code blocks to simulate it. Please refer to two python files for more details.**)
+
+1. Parameter initializing: $n=10$ and $m = 5$. Other parameters are introduced later. (*<u>Option</u>*: Some values can be input by users in Command Line.)
+2. Read the environment data ${E_{\left| N \right| \times \left| N \right|}}$ from `in.txt`, where $\left| N \right|$ is given as $300$ from this document.
+3. The initial positions of sheep are given by (1) inputing from this [Website](http://www.geog.leeds.ac.uk/courses/computing/practicals/python/agent-framework/part9/data.html); or (2) a random value between $0$ and $\left| N \right|$ if there is no input. All sheep are alive at the beginning $A = [a_1,a_2,...,a_n] = [1,1,...,1]$ ($a = 1$ represents this sheep is alive), and the store of each sheep is $0$, that is, $P = [p_1,p_2,...,p_n] = [0,0,...,0]$.
+4. The initial positions of wolves are given by a random value between $0$ and $\left| N \right|$. All wolves are also alive at the beginning $B = [b_1,b_2,...,b_n] = [1,1,...,1]$ ($b = 1$ represents this wolf is alive) and do not begin to eat sheep (the number of sheep that each wolf has already eaten is 0, $K = [k_1,k_2,...,k_n] = [0,0,...,0]$).
+5. *<u>Option</u>*: Users can visualize (1) the environment; (2) the initial position of each sheep and highlight the sheep with the largest $x$ (furthest east) in a different color.
+6. *<u>Option</u>*: Users can measure the distance between all sheep based on three functions in the code (please refer to the code for more details), thus can identify/visualize the timings for three functions under the different numbers of sheep.
+7. In the $t$th iteration,
+   1.  Obtain the average store of sheep $\bar p = \sum\limits_{i = 1}^n {{p_i}} /n$.
+   2. For the $i$th sheep $s_i$: The dead sheep ($a_i = 0$) has no action, and these actions below only work for alive sheep ($a_i = 1$). (<u>*Option*</u>: The order of actions below can be random by using `random.shuffle`.)
+      1. Movement: The sheep will move 2 units in this iteration randomly if the store is higher than the $\alpha = 1.1$ times the average store ($p_i > \alpha \times \bar p$), that is, $x_i = x_i \pm 2$ and $y_i = y_i \pm 2$; otherwise, the sheep will only move 1 unit in this iteration randomly ($x_i = x_i \pm 1$ and $y_i = y_i \pm 1$) when $p_i \le \alpha \times \bar p$. The space is a "torus", thus sheep that leave the top of an area come in at the bottom, and come in on the right when they leave left. (*<u>Option</u>*: Users can print the position of each sheep before and after movement.)
+      2. Eat: There are three kinds of situation: (1) If the store of the environment at this position is sufficient ($e_{x_iy_i} > 10$), the sheep eats the store of the environment ($p_i = p_i + 10$ and $e_{x_iy_i} = e_{x_iy_i} - 10$); (2) If the store of the environment at this position is insufficient ($e_{x_iy_i} \le 10$), the sheep will return the store ($e_{x_iy_i} = e_{x_iy_i} + p_i$ and $p_i = 0$); (3) If the sheep has too much stores ($p_i > 100$), the sheep will return the store ($e_{x_iy_i} = e_{x_iy_i} + 100$ and $p_i = 0$).
+      3. Share the store with alive neighbors ($a = 1$) if their distance is less the required distance $\eta = 20$: The steps are: (1) Measure the distance between this sheep $s_i$ and other sheep $s_j, 1 \le j \le n$, that is, ${d_{ij}} = \sqrt {{{\left( {{x_i} - {x_j}} \right)}^2} + {{\left( {{y_i} - {y_j}} \right)}^2}}$. (2) If the distance is larger than the required distance ($d_{ij} > \eta$), two sheep do not share the store. (3) If the distance is smaller than the required distance ($d_{ij} \le \eta$), the sheep with lower store can steal more resources $\frac{3 \times (p_i +p_j)}{4}$ from others, and the sheep with higher store can only obtain the other resources $\frac{(p_i +p_j)}{4}$. If their stores are the same, both will obtain the same resources $\frac{(p_i +p_j)}{2}$.
+   3. For the $i$th wolf $w_i$: The dead wolf ($b_i = 0$) has no action, and these actions below only work for alive wolves ($b_i = 1$).
+      1. Update the status: If this wolf has already eaten more than $\kappa = 5$ sheep ($k_i > \kappa$), this wolf will die ($b_i = 0$).
+      2. Movement: The wolf moves more quickly than the sheep, and the wolf will move $l = 5$ units in each iteration randomly ($x_i = x_i \pm l$ and $y_i = y_i \pm l$). The space is a "torus", thus wolves that leave the top of an area come in at the bottom, and come in on the right when they leave left.
+      3. The wolf will eat alive sheep ($a = 1$) if their distance is less the required distance $\lambda = 30$: The steps are: (1) Measure the distance between this wolf $w_i$ and other sheep $s_j, 1 \le j \le n$, that is, ${d_{ij}} = \sqrt {{{\left( {{x_i} - {x_j}} \right)}^2} + {{\left( {{y_i} - {y_j}} \right)}^2}}$. (2) If the distance is larger than the required distance ($d_{ij} > \lambda$), this wolf $w_i$ cannot eat this sheep $s_j$. (3) If the distance is smaller than the required distance ($d_{ij} \le \lambda$), this wolf $w_i$ will eat this sheep $s_j$. Hence, this sheep will die $a_j = 0$ and the number of sheep that wolf $w_i$ has already eaten is $k_i = k_i + 1$.
+   4. New sheep will born each $t_s = 5$ iterations: If $t \% t_s = 0$ (the remainder is $0$), new sheep will born in this iteration. The steps are: (1) Find the number of alive sheep $n_l$ with $a = 1$. (2) The number of newborn sheep is $r_s = 0.2$ of the number of alive sheep (by rounding), that is, $n_b = r_s \times n_l$. (3) Assign ID and position for these new sheep. (4) The current total number of sheep is $n = n + n_b$, and the current total alive number of sheep is $n_l = n_l + n_b$. 
+   5. New wolves will born each $t_w = 10$ iterations: If $t \% t_w = 0$ (the remainder is $0$), new wolves will born in this iteration. The steps are: (1) Find the number of alive wolves $m_l$ with $b = 1$. (2) The number of newborn wolves is $r_w = 0.2$ of the number of alive wolves (by rounding), that is, $m_b = r_w \times m_l$. (3) Assign ID and position for these new wolves. (4) The current total number of wolves is $m = m + m_b$, and the current total alive number of wolves is $m_l = m_l + m_b$. 
+   6.  <u>*Option*</u>: Users can output the total amount stored by all the agents in this iteration to `output_store.txt` file.
+8. *<u>Option</u>*: Users can visualize both the environment and agents, including alive sheep (blue), dead sheep (red), alive wolves (black), and dead wolves (yellow).
+9. *<u>Option</u>*: Users can output the environment data to `output_environment.txt` file.
+10. *<u>Option</u>*: The animation can be visualized by moving points shown in the environment if users prefer, where different agents are represented by different colors. 
+11. *<u>Option</u>*: The simulation can be completed in the GUI if users prefer.
+
 ## Basic Introduction
 
-**A simple list of what all the files/directories are:**
+**List of the files/directories:**
 
-There are two `*.py` files. `main.py` contains the main program code, and `agentframework.py` constructs the Agents class for sheep and wolves, as well as their actions. 
+There are two `*.py` files. (1) `main.py` contains the main program code, and (2) `agentframework.py` constructs the Agents class for sheep and wolves, as well as their actions. 
 
 There are three text files. `in.txt` provides the environment data. `output_environment.txt` and `output_store.txt` are output files that save the environment data after running the code and the total amount stored by all the agents at each step, respectively.
 
@@ -26,31 +59,33 @@ The website that introduces this code is [here](https://taaowen.github.io/ABM.ht
 
 **The software is:**
 
-This software is designed to model different kinds of action of agents, including the birth, movement, eating, and sharing information with neighbors. The specific information is shown below.
+This software is designed to model different kinds of action of agents, including birth, movement, eating, and sharing information with neighbors. For example.
 
 1. There are different numbers of sheep and wolves at the beginning whose positions are randomly distributed in the environment, and they can move randomly in the process. However, wolves can move quicker than sheep, and sheep with different stores have different speeds. 
 2. Sheep can eat the grass in the environment based on certain rules. Wolves can eat sheep when they are close.  
 3. Sheep will die when they are eaten by wolves, and wolves will die when they eat a certain number of sheep. The state of each sheep and wolf will be saved in code and shown in the visualized figure.
-4. Sheep can share the information/store with neighbor within a defined distance.
+4. Sheep can share the information/store with the neighbor within a defined distance.
 5. Sheep and wolves have different birth rates.
 
-The mathematic model of my code can be found in the submitted word file because it contains many equations.
+Please refer to Mathematic Model Section for the details about the action and definition of sheep and wolves.
 
 ---
 
 **How to run the software and what to expect when it is run:**
 
-There are 4 parts in `main.py`. The initial parameter setting, function, and `Agents` class can be used in all 3 parts.
+There are 4 parts in `main.py`. The initial parameter setting, functions, and `Agents` class can be used in all 3 parts (1 Basic figures, 2 Animation, and 3 GUI design).
 
-1. **Initial setting**: All initial information about agents and environment are set here and users do not need to change it if they want to use default value.
-2. **Basic figures**: Users only need to click 'Run files' or `F5` to run this part. Users can obtain the final visualized figure that shows the environment and positions of sheep and wolves (with different color). Users can also obtain the environment after modelling and the total amount stored by all the agents at each step in `.txt` files by uncommenting some lines based on the introduction in `main.py`. Please uncomment all codes between `Code below is for Basic figures` and `Code above is for Basic figures` when users want to run this part of code.
-3. **Animation**: Users only need to click 'Run files' or `F5` to run this part. Users can get a GIF of agents (wolves and sheep) moving in the environment that shows agents’ movement and state, as well as the amount of grass in each point. Please uncomment all codes between `Code below is for Animation` and `Code above is for Animation` when users want to run this part of code.
-4. **GUI design**: Users only need to click 'Run files' to run this part. The same results in "Animation" can be obtained, but users need to click 'Run model' in GUI. Please uncomment all codes between `Code below is for GUI Setting` and `Code above is for GUI Setting` when users want to run this part of code. In addition, users need to use `Tkinter` and can refer to this [introduction](https://www.geog.leeds.ac.uk/courses/computing/practicals/python/agent-framework/part9/index.html) to set.
+1. **Initial setting**: All initial information about agents and environment are set here and users do not need to change it if they want to use the default value.
+2. **Basic figures**: Users only need to click 'Run files' or `F5` to run this part (uncomment this code block first). Users can obtain the final visualized figure that shows the environment and positions of sheep and wolves (with a different color). Users can also obtain the environment after modelling and the total amount stored by all the agents at each step in `.txt` files by uncommenting some lines based on the introduction in `main.py`. Please uncomment all codes between `Code below is for Basic figures` and `Code above is for Basic figures` when users want to run this part of the code.
+3. **Animation**: Users only need to click 'Run files' or `F5` to run this part  (uncomment this code block first). Users can get a GIF of agents (wolves and sheep) moving in the environment that shows agents’ movement and state, as well as the amount of grass at each point. Please uncomment all codes between `Code below is for Animation` and `Code above is for Animation` when users want to run this part of the code.
+4. **GUI design**: Users only need to click 'Run files' to run this part. The same results in "Animation" can be obtained, but users need to click 'Run model' in GUI. Please uncomment all codes between `Code below is for GUI Setting` and `Code above is for GUI Setting` when users want to run this part of the code. In addition, users need to use `Tkinter` and can refer to this [introduction](https://www.geog.leeds.ac.uk/courses/computing/practicals/python/agent-framework/part9/index.html) to set.
+
+If there are any questions about running the code, please contact me at taaowen@gmail.com.
 
 Please note that all tests are included in `main.py` and `agentframework.py` by commenting. Thus, users can uncomment specific lines to test whether the code can work normally based on the introduction in these files (test results are also given in this file). For example,
 
 1. Read model parameters from the command line;
-2. Visualize the environment data obtained from text file;
+2. Visualize the environment data obtained from the text file;
 3. Measure the distance between two agents by different functions defined in advance, and obtain the timings for different functions with different number of agents to visualize;
 4. Identify the agent with the largest x (furthest east);
 5. Print the position (and other information) of agents in each iteration;
@@ -59,36 +94,41 @@ Please note that all tests are included in `main.py` and `agentframework.py` by 
 
 ---
 
-**Known issues:**
+**Testing done:**
 
-There are no known issues now.
+Almost all codes are tested, and all details can be found in the comment of `main.py` and `agentframework.py`. Users can also refer to Appendix to direct read test results of this code. **Notice**: We direct test these basic codes and functions based on the `Agents` class.
 
-Please note that the test code below may be different from the final version, but it does **NOT** change the final outcome and performance of the code.
+Please note that the test code in Appendix may be different from the final version, but it does **NOT** change the final outcome and performance of the code.
 
 ---
 
-**Testing done:**
+**Known issues:**
 
-Almost all codes are tested, and all details can be found in the comment of `main.py` and `agentframework.py`.
+There are no known issues now.
 
 ---
 
 **Ideas for further development:**
 
-The mathematic model about the movement and dynamic of agents can be further improved.
+The mathematic model about the movement and dynamic of agents can be further improved (if necessary).
 
-Appendix - Test results
+## Appendix - Test results
 
-## First module -- Agent Based Modelling
+### First class -- Agent Based Modelling
 
-Some tests are shown below. **Notice**: We direct test these basic codes and functions based on the `Agents` class. 
+#### Test 1: Identify the initial position of each agent.
 
-**Test 1**: Identify the initial position of each agent based on the random.randint function.
+The initial position of each agent is given by the random.randint function, we print the position and ID of each agent after defining. 
 
 ```python
+# Make the sheep, the number is "num_of_agents"
 for i in range(num_of_agents):
+    # Position is randomly given by default, you can also input the position of agents 
+    # by using "agents.append(agentframework.Agent(environment,agents,i,ypos,xpos))"
+    # where "ypos" and "xpos" are "float" that indicate the position of this agent
+    # More details can be found in the next code block 
     agents.append(agentframework.Agent(environment,agents,i))
-    # Uncomment next line to print the initial position of all agents
+    # Uncomment next line to print the initial position of all sheep
     print(agents[i])
 ```
 
@@ -107,20 +147,21 @@ ID = 9, x=79, y=12`
 
 ----
 
-**Test 2**: Find the position of each agent in each step when they move randomly.
+#### Test 2: Find the position of each agent in each iteration after random movement.
 
 ```python
 # Move the agents.
-for j in range(num_of_iterations):
+for j in range(num_of_iterations): # each iteration
     # Uncomment next line to print the step of the movement
     print("It is", j, "step")
     for i in range(num_of_agents):
         agents[i].move()
         # Uncomment next line to print the position of each agent in each step
         print(agents[i])
+
 ```
 
-Output is below, where `ID` is the agent ID,`x` and `y` represent the position of each agent after the movement. We can find the position of each agent is continues (`x = x +/- 1, y = y +/- 1`). 
+Output is below, where `ID` is the agent ID,`x` and `y` represent the position of each agent after the movement. We can find the position of each agent is continues ($x = x \pm 1, y = y \pm 1$). 
 
 `It is 0 step
 ID = 0, x=96, y=48
@@ -158,30 +199,41 @@ ID = 9, x=78, y=11`
 
 ---
 
-**Test 3**: With our defined function `distance_between` that measures the distance between two agents, 
+#### Test 3: Measure the distance based on function `distance_between`.
+
+The distance between agents can be measured by `distance_between`.
 
 ```python
-# Obtain the distance between two agents
+# Function: Obtain the distance between two agents based on the Euclidean Distance
 def distance_between(agents_row_a, agents_row_b):
     """
-    Obtain the distance between two agents
+    Obtain the distance between two agents based on the Euclidean Distance
     
-    :param agents_row_a: First agent 
-    :param agents_row_b: Second agent
+    Parameters
+    ----------
+    agents_row_a: agentframework.Agent
+        The framework of the first agent 
+    agents_row_b: agentframework.Agent
+        The framework of the second agent
     
-    :return: The distance between two agents based on Euclidean distance
+    Returns
+    -------
+    distance_obtain: float
+        The distance between two agents based on Euclidean distance
     """
-    return (((agents_row_a.x - agents_row_b.x)**2) +
+    # Euclidean Distance
+    distance_obtain = (((agents_row_a.x - agents_row_b.x)**2) +
     ((agents_row_a.y - agents_row_b.y)**2))**0.5
+    return distance_obtain
 ```
 
-we test if this function can work normally.
+We then test if this function can work normally.
 
 ```python
-# Uncomment next line to test if "distance_between" function can work normally.
-print("The position of agent A is", agents[0])
-print("The position of agent B is", agents[1])
-print("The distance between agent A and B is", distance_between(agents[0],agents[1]))
+# Uncomment next lines to test if "distance_between" function can work normally.
+print("The position of agent A is", agents[0]) # information of agent A
+print("The position of agent B is", agents[1]) # information of agent B
+print("The distance between agent A and B is", distance_between(agents[0],agents[1])) # distance between agent A and B
 ```
 
 Output is below. We can find the distance obtained by our defined function is correct. 
@@ -190,20 +242,23 @@ Output is below. We can find the distance obtained by our defined function is co
 The position of agent B is ID = 1, x=5, y=53
 The distance between agent A and B is 92.0869154657707`
 
-## Second module -- Code shrinking I
+### Second class -- Code shrinking I
 
-The storage of agent position (by `*.append`) has been test **Test 1** in the first module, so we do not repeat to test it here.
+The storage of agent position (by `*.append`) has been test **Test 1** in the first class, so we do not repeat to test it here.
 
-**Test 1**: After initializing the position of all agents, we want to test if our code can find the agent with the largest `x` (furthest east) position. The code is shown below.
+#### Test 1: Find the agent with the largest `x` (furthest east) position.
+
+After initializing the position of all agents, we want to test if our code can find the agent with the largest `x` (furthest east) position. The code is shown below.
 
 ```python
 # Uncomment next lines to find the agent with the largest x (furthest east)
-matplotlib.pyplot.xlim(0, 99)
-matplotlib.pyplot.ylim(0, 99)
-for i in range(num_of_agents):
-    matplotlib.pyplot.scatter(agents[i].x,agents[i].y)
-sorted_agents = sorted(agents, key = lambda a: a.y)
-matplotlib.pyplot.scatter(sorted_agents[len(agents)-1].x,sorted_agents[len(agents)-1].y, color = 'black')
+matplotlib.pyplot.xlim(0, len(environment[0])) # range of x axis
+matplotlib.pyplot.ylim(0, len(environment)) # range of y axis
+for i in range(num_of_agents): # all agents are given in black color
+    matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'black')
+sorted_agents = sorted(agents, key = lambda a: a.x) # sort the agent based on x
+# agent with largest x is given by red color
+matplotlib.pyplot.scatter(sorted_agents[len(agents)-1].x,sorted_agents[len(agents)-1].y, color = 'red')
 matplotlib.pyplot.show()
 ```
 
@@ -211,15 +266,21 @@ Then, we can obtain the agent with the largest `x` (furthest east) shown as the 
 
 <img src="testfigure/largest_y.png" alt="largest_y" style="zoom:72%;" />
 
-## Third module -- Code shrinking II
+### Third class -- Code shrinking II
 
-**Test 1**: We want to use for-loops to reduce the code size, the initialization and movement of `num_of_agents` agents in `num_of_iterations` steps are shown below.
+#### Test 1: Reduce the code size by using for-loops.
+
+We want to use for-loops to reduce the code size, the initialization and movement of `num_of_agents` agents in `num_of_iterations` steps are shown below.
 
 ```python
-# Make the agents.
+# Make the sheep, the number is "num_of_agents"
 for i in range(num_of_agents):
+    # Position is randomly given by default, you can also input the position of agents 
+    # by using "agents.append(agentframework.Agent(environment,agents,i,ypos,xpos))"
+    # where "ypos" and "xpos" are "float" that indicate the position of this agent
+    # More details can be found in the next code block 
     agents.append(agentframework.Agent(environment,agents,i))
-    # Uncomment next line to print the initial position of all agents
+    # Uncomment next line to print the initial position of all sheep
     print(agents[i])
 
 # Move the agents.
@@ -231,7 +292,7 @@ for j in range(num_of_iterations):
         agents[i].move()
 ```
 
-Output is below. We can find the initial position and the movement of `num_of_agents = 10` agent in `num_of_iterations = 3` steps (<u>`num_of_agents` and `num_of_iterations` are small here only for a test</u>). The movement of all agents is continues, which is the same as the output of **Test 2** in the first module.
+Output is below. We can find the initial position and the movement of `num_of_agents = 10` agent in `num_of_iterations = 3` steps (<u>`num_of_agents` and `num_of_iterations` are small here only for a test</u>). The movement of all agents is continues, which is the same as the output of **Test 2** in the first class.
 
 `ID = 0, x=97, y=49
 ID = 1, x=5, y=53
@@ -277,43 +338,58 @@ ID = 7, x=37, y=18
 ID = 8, x=95, y=18
 ID = 9, x=78, y=11`
 
-## Fourth module -- Building tools
+### Fourth class -- Building tools
 
-Whether the `distance_between` function can work normally has been tested in **Test 3** of the first module, so we do not repeat to test it here.
+Whether the `distance_between` function can work normally has been tested in **Test 3** of the first class, so we do not repeat to test it here.
 
-**Test 1**: We will test the running time to calculate the distance between each pair of agent, and we only do not calculate the distance from `agentA` to `agentA` in this function, that is, `i != j`. The code is shown below.
+#### Test 1: Obtain the timing for calculating the distance between agents based on function `calculate_distance_0`.
+
+We will test the running time to calculate the distance between each pair of agent, and we only do not calculate the distance from `agentA` to `agentA` in this function, that is, `i != j`. The code is shown below.
 
 ```python
-# Function: Calculate the distance between each pair of agent
+# Function: Calculate the distance between each pair of agent based on function "calculate_distance_0"
 def calculate_distance_0(agents):
     """
     Obtain the timing to calculate the distance between each pair of nodes,
-    where agentA and agentB are all from 1 to end, and agentA != agentB
+    where agentA and agentB are both from 1 to end, and agentA != agentB
     
-    :param agents: Agent list
-    
-    :return: need_time: Timing needed to obtain the distance
-    :return: max_dis: The maximum distance between agents
-    :return: min_dis: The minimum distance between agents
+    Parameters
+    ----------
+    agents: list
+        The list of agents
+        
+    Returns
+    -------
+    need_time: float
+        Timing needed to obtain the distance for all pair of agents based on this function
+    max_dis: float
+        The maximum distance between agents
+    min_dis: float
+        The minimum distance between agents
     """
+    # Initial setting for max and min distance
     max_dis = distance_between(agents[0], agents[1])
     min_dis = max_dis
     
-    start_time = time.time()
+    start_time = time.time() # Time begin
+    # agentA and agentB are both from 1 to end
     for i in range(0, num_of_agents, 1):
         for j in range(0, num_of_agents, 1):
+            # agentA != agentB
             if i != j:
-                # Uncomment next line to print the distance between each pair of agents
-                print("The distance between Agent", agents_row_a.ID, \
-                      "and Agent", agents_row_b.ID, \
-                      "is", distance_between(agents_row_a, agents_row_b))
+#                # Uncomment next line to print the distance between each pair of agents
+#                print("The distance between Agent", agents_row_a.ID, \
+#                      "and Agent", agents_row_b.ID, \
+#                      "is", distance_between(agents_row_a, agents_row_b))
+                
+                # Update the max and min distance
                 max_dis = max(max_dis, distance_between(agents[i], agents[j]))
                 min_dis = min(min_dis, distance_between(agents[i], agents[j]))
-    end_time = time.time()
-    need_time = end_time - start_time
-    # Uncomment next lines to print the max and min distances, as well as the timing
-    print("Maximum distance is", max_dis, "and minimum distance is", min_dis)
-    print("Running time is", need_time)
+    end_time = time.time() # Time end
+    need_time = end_time - start_time # Time calculate
+#    # Uncomment next lines to print the max and min distances, as well as the timing
+#    print("Maximum distance is", max_dis, "and minimum distance is", min_dis)
+#    print("Running time is", need_time)
     return need_time, max_dis, min_dis
 ```
 
@@ -414,75 +490,103 @@ Running time is 0.0`
 
 ---
 
-**Test 2**: Apart from the function `calculate_distance_0` that `agentA` and `agentB` are all from 1 to end (`agentA != agentB`), a new function `calculate_distance_1` that only calculate the distance between agents when `agents_row_a.ID > agents_row_b.ID` although `agentA` and `agentB` are still from 1 to end is then used. The code is below.
+#### Test 2: Obtain the timings for calculating the distance between agents based on function `calculate_distance_1` and `calculate_distance_2`.
+
+Apart from the function `calculate_distance_0` that `agentA` and `agentB` are all from 1 to end (`agentA != agentB`), a new function `calculate_distance_1` that only calculate the distance between agents when `agents_row_a.ID > agents_row_b.ID` although `agentA` and `agentB` are still from 1 to end is then used. The code is below.
 
 ```python
-# Function: Calculate the distance between each pair of agent
+# Function: Calculate the distance between each pair of agent based on function "calculate_distance_1"
 def calculate_distance_1(agents):
     """
     Obtain the timing to calculate the distance between each pair of nodes,
-    where agentA and agentB are all from 1 to end, but the distance is only calculated
+    where agentA and agentB are both from 1 to end, but the distance is ONLY calculated
     when agents_row_a.ID > agents_row_b.ID
     
-    :param agents: Agent list
-    
-    :return: need_time: Timing needed to obtain the distance
-    :return: max_dis: The maximum distance between agents
-    :return: min_dis: The minimum distance between agents
+    Parameters
+    ----------
+    agents: list
+        The list of agents
+        
+    Returns
+    -------
+    need_time: float
+        Timing needed to obtain the distance for all pair of agents based on this function
+    max_dis: float
+        The maximum distance between agents
+    min_dis: float
+        The minimum distance between agents
     """
+    # Initial setting for max and min distance
     max_dis = distance_between(agents[0], agents[1])
     min_dis = max_dis
     
-    start_time = time.time()
+    start_time = time.time() # Time begin
+    # agentA and agentB are both from 1 to end
     for i in range(0, num_of_agents, 1):
         for j in range(0, num_of_agents, 1):
+            # distance is ONLY calculated when agents_row_a.ID > agents_row_b.ID
             if i > j:
 #                # Uncomment next line to print the distance between each pair of agents
 #                print("The distance between Agent", agents_row_a.ID, \
 #                      "and Agent", agents_row_b.ID, \
 #                      "is", distance_between(agents_row_a, agents_row_b))
+                
+                # Update the max and min distance
                 max_dis = max(max_dis, distance_between(agents[i], agents[j]))
                 min_dis = min(min_dis, distance_between(agents[i], agents[j]))
-    end_time = time.time()
-    need_time = end_time - start_time
-    # Uncomment next lines to print the max and min distances, as well as the timing
-    print("Maximum distance is", max_dis, "and minimum distance is", min_dis)
-    print("Running time is", need_time)
+    end_time = time.time() # Time end
+    need_time = end_time - start_time # Time calculate
+#    # Uncomment next lines to print the max and min distances, as well as the timing
+#    print("Maximum distance is", max_dis, "and minimum distance is", min_dis)
+#    print("Running time is", need_time)
     return need_time, max_dis, min_dis
 ```
 
 The third function `calculate_distance_2` has a different for-loops, that is, `agentA` is from 1 to end, `agentB` is from `agentA` to end (not include `agentA`), and it is shown below.
 
 ```python
-# Function: Calculate the distance between each pair of agent
+# Function: Calculate the distance between each pair of agent based on function "calculate_distance_2"
 def calculate_distance_2(agents):
     """
     Obtain the timing to calculate the distance between each pair of nodes,
-    where agentA is from 1 to end, agentB is from agentA to end (not include agentA)
+    where agentA is from 1 to end, agentB is from agentA to end (NOT include agentA)
     
-    :param agents: Agent list
-    
-    :return: need_time: Timing needed to obtain the distance
-    :return: max_dis: The maximum distance between agents
-    :return: min_dis: The minimum distance between agents
+    Parameters
+    ----------
+    agents: list
+        The list of agents
+        
+    Returns
+    -------
+    need_time: float
+        Timing needed to obtain the distance for all pair of agents based on this function
+    max_dis: float
+        The maximum distance between agents
+    min_dis: float
+        The minimum distance between agents
     """
+    # Initial setting for max and min distance
     max_dis = distance_between(agents[0], agents[1])
     min_dis = max_dis
     
-    start_time = time.time()
+    start_time = time.time() # Time begin
+    # agentA is from 1 to end
     for i in range(0, num_of_agents, 1):
+        # agentB is from agentA to end (NOT include agentA)
         for j in range(i + 1, num_of_agents, 1):
 #            # Uncomment next line to print the distance between each pair of agents
 #            print("The distance between Agent", agents_row_a.ID, \
 #                  "and Agent", agents_row_b.ID, \
 #                  "is", distance_between(agents_row_a, agents_row_b))
+            
+            # Update the max and min distance
             max_dis = max(max_dis, distance_between(agents[i], agents[j]))
             min_dis = min(min_dis, distance_between(agents[i], agents[j]))
-    end_time = time.time()
-    need_time = end_time - start_time
-    # Uncomment next lines to print the max and min distances, as well as the timing
-    print("Maximum distance is", max_dis, "and minimum distance is", min_dis)
-    print("Running time is", need_time)
+    end_time = time.time() # Time end
+    need_time = end_time - start_time # Time calculate
+#    # Uncomment next lines to print the max and min distances, as well as the timing
+#    print("Maximum distance is", max_dis, "and minimum distance is", min_dis)
+#    print("Running time is", need_time)
     return need_time, max_dis, min_dis
 ```
 
@@ -508,11 +612,14 @@ We can find the maximum and minimum distance obtained by three functions are the
 
 ----
 
-**Test 3**: The running time for two distance calculating functions with different number of agents are then tested.
+#### Test 3: Obtain the timings for measuring the distance between agents based on different functions under different number of agents, and compare it by visualizing.
+
+The running time for three distance calculating functions with different number of agents are then tested.
 
 ```python
 # Uncomment next lines to obtain the timings for three function under different number of agents
-num_of_agents_list = [10,20,50,100,200,500,1000,2000,4000]
+num_of_agents_list = [10,20,50,100,200,500,1000,2000,4000] # To test the timings for different number of agents
+# timing initializing
 running_time0 = []
 running_time1 = []
 running_time2 = []
@@ -520,11 +627,14 @@ for num_of_agents in num_of_agents_list:
     # Print the current number of agents
     print("Now, the number of agents is", num_of_agents)
     agents = []
+    # make the agents
     for i in range(num_of_agents):
-        agents.append(agentframework.Agent(environment,agents,i))
-#    # Uncomment next line to print the initial position of all agents
-#    print(agents[i])
+        # Position is randomly given by default, you can input the position manually (refer to comments above)
+        agents.append(agentframework.Agent(environment, agents, i))
+#        # Uncomment next line to print the initial position of all agents
+#        print(agents[i])
     
+    # obtain the timings, the maximum distances, and the minimum distances from three functions
     need_time0, max_dis0, min_dis0 = calculate_distance_0(agents)
     running_time0.append(need_time0)
     need_time1, max_dis1, min_dis1 = calculate_distance_1(agents)
@@ -532,18 +642,20 @@ for num_of_agents in num_of_agents_list:
     need_time2, max_dis2, min_dis2 = calculate_distance_2(agents)
     running_time2.append(need_time2)
     
-# Calculate the maximum time it takes for any run. 
+# Calculate the maximum time it takes for any run, then set the axis limit
 max_time = max(running_time0)
 max_time = max(max_time, max(running_time1))
 max_time = max(max_time, max(running_time2))
 # Set the axis limits
 matplotlib.pyplot.ylim(0, 1.1 * max(num_of_agents_list))
 matplotlib.pyplot.xlim(0, 1.1 * max_time)
-# Plot the timings in a graph
+# visualize the timings obtained from different functions
 for i in range(len(num_of_agents_list)):
+    # Please note the color for each function
     matplotlib.pyplot.scatter(running_time0[i],num_of_agents_list[i], color="red")
     matplotlib.pyplot.scatter(running_time1[i],num_of_agents_list[i], color="black")
     matplotlib.pyplot.scatter(running_time2[i],num_of_agents_list[i], color="green")
+# name of label and legend
 matplotlib.pyplot.xlabel("Timing")
 matplotlib.pyplot.ylabel("Number of agents")
 matplotlib.pyplot.legend(["Function0","Function1","Function2"])
@@ -556,11 +668,13 @@ When the list of the number of agents is `num_of_agents_list = [10,20,50,100,200
 
 
 
-## Fifth module -- Agents!
+### Fifth class -- Agents!
 
-Whether the `Agents` class can make the agent position normally has been tested in **Test 1** of the first module, so we do not repeat to test it here.
+Whether the `Agents` class can make the agent position normally has been tested in **Test 1** of the first class, so we do not repeat to test it here.
 
-**Test 1**: To test if the `Agents` class can move the agent based on `random.random()`, the code below is used.
+#### Test 1: Test if the `Agents` class can move the agent based on `random.random()`.
+
+The code below is used.
 
 ```python
 # Move the agents.
@@ -575,7 +689,7 @@ for j in range(num_of_iterations):
         print("After moving",agents[i])
 ```
 
-Only part of outcomes are shown below. We can find the movement of each agent is continues (`x = x +/- 1, y = y +/- 1`). 
+Only part of outcomes are shown below. We can find the movement of each agent is continues ($x = x \pm 1, y = y \pm 1$). 
 
 `Before moving ID = 0, x=95, y=49
 After moving ID = 0, x=94, y=50
@@ -586,15 +700,17 @@ After moving ID = 2, x=64, y=34
 Before moving ID = 3, x=51, y=62
 After moving ID = 3, x=50, y=63`
 
-## Sixth module -- I/O
+### Sixth Class -- I/O
 
-**Test 1**: In order to test if we can input the environment from the `.txt` file, the code below is used.
+#### Test 1: Test if the environment can be input from text file by visualizing.
+
+In order to test if we can input the environment from the `.txt` file, the code below is used.
 
 ```python
-# Uncomment next lines to visualize the environment
-matplotlib.pyplot.xlim(0, len(environment[0]))
-matplotlib.pyplot.ylim(0, len(environment))
-matplotlib.pyplot.imshow(environment)
+# Uncomment next lines to visualize the environment without agents
+matplotlib.pyplot.xlim(0, len(environment[0])) # range of x axis
+matplotlib.pyplot.ylim(0, len(environment)) # range of y axis
+matplotlib.pyplot.imshow(environment) # show the figure
 matplotlib.pyplot.show()
 ```
 
@@ -604,7 +720,9 @@ The figure is shown below, and we can find the environment can be inputted from 
 
 ---
 
-**Test 2**: We then test if we can display the environment and agents simultaneously, the code below is used.
+#### Test 2: Visualize the environment and agents simultaneously.
+
+We then test if we can display the environment and agents simultaneously, the code below is used.
 
 ```python
 # Uncomment next lines to display environment and agent
@@ -622,7 +740,9 @@ The output is shown below, where agents are shown as red points in the environme
 
 ---
 
-**Test 3**: We then write out the environment as a file, and the code is below.
+#### Test 3: Output the environment into a text file.
+
+We then write out the environment as a file, and the code is below.
 
 ```python
 # Uncomment next lines to write out the environment as .txt file
@@ -635,14 +755,25 @@ with the function defined as
 ```python
 # Function: Write environment to txt file
 def write_environment_to_output(write_str):
+    """
+    Write environment to "output_environment.txt"
+    The size of the matrix of the environment is the same as the matrix read 
+    from "in.txt" because the code only changes the value of element and does 
+    not change the size
+    
+    Parameters
+    ----------
+    write_str: str
+        str needs to be output in the .txt file
+    """
+    # open the .txt file
     with open("output_environment.txt", "a+") as f:
+        # Each line of the environment (**apart from** the last one in each line)
         for j in range(len(write_str)-1):
-            f.write(str(write_str[j]))
-            f.write(',')
-        # Write out the last value without "," at the end
-        f.write(str(write_str[-1]))
-        # New line
-        f.write("\n")
+            f.write(str(write_str[j])) # Write each line **apart from** the last one
+            f.write(',') # wirte ","
+        f.write(str(write_str[-1])) # Write out the last value WITHOUT "," at the end of each line
+        f.write("\n") # New line
 ```
 
 Part of the output (one line of the environment) in the `output_environment.txt` is shown below and it meets our expectation.
@@ -651,7 +782,9 @@ Part of the output (one line of the environment) in the `output_environment.txt`
 
 ---
 
-**Test 4**: We write out the total amount stored by all the agents. Here, the output is obtained after the movement and eating of each iteration. In addition, the output does not contain the initial total amount because it is 0 by default. The code is shown below.
+#### Test 4: Output the total amount stored by all the agents into a text file.
+
+We write out the total amount stored by all the agents. Here, the output is obtained after the movement and eating of each iteration. In addition, the output does not contain the initial total amount because it is 0 by default. The code is shown below.
 
 ```python
 # Move the agents.
@@ -661,11 +794,12 @@ for j in range(num_of_iterations):
         agents[i].eat()
     # Uncomment next lines to output total amount stored by all the agents to txt file
     # The output does not contain the initial total amount because it is 0 by default setting
-    totalStored = 0
+    totalStored = 0 # initializing
     for i in range(num_of_agents):
         totalStored += agents[i].store
-    write_store_to_output("After the movement and eating of step " + str(j) + ", and the total amount stored by all the agents is " + str(totalStored))
- 
+    # write the str to txt file
+    write_store_to_output("After the movement and eating of step " + str(j) + \
+                          ", and the total amount stored by all the agents is " + str(totalStored))
 ```
 
 Part of the output (3 steps) is shown below. We can find the the total amount increases 100 each step because there are `num_of_agents = 10` agents and each agent eat 10 each step. Thus, it is correct. 
@@ -676,10 +810,15 @@ After the movement and eating of step 2, and the total amount stored by all the 
 
 ---
 
-**Test 5**: We then define  `__str__(self)` in the agents and print location and stores of each agent. The `__str__(self)` is defined as below.
+#### Test 5: Print the location and stores of each agent by `__str__(self)`.
+
+We then define  `__str__(self)` in the agents and print location and stores of each agent. The `__str__(self)` is defined as below.
 
 ```python
     def __str__(self):
+        """
+        print the information of the agent, including ID, x and y positio, as well as the store
+        """
         return "ID = " + str(self.ID) \
                 + ", x=" + str(self.x) \
                 + ", y=" + str(self.y) \
@@ -734,74 +873,163 @@ ID = 9, x=78, y=11, store=30`
 
 ---
 
-**Test 6**: In the `Agents` class, we use the environment size to randomize agents' starting locations and deal with the boundary conditions. The code in `Agents` class is shown below.
+#### Test 6: Randomize the initial position of agents and deal with the boundary conditions by the environment size.
+
+In the `Agents` class, we use the environment size to randomize agents' starting locations and deal with the boundary conditions. The code in `Agents` class is shown below.
 
 ```python
-    # Agent setting
-    def __init__(self,environment,agents,ID):
-        self.environment = environment
-        self.store = 0
+    def __init__(self,environment,agents,ID,y = None,x = None):
+        """
+        Agent setting (define)
+        Position will be random if do not input y and x, that is, type "agentframework.Agent(environment,agents,ID)"
+        
+        Parameters
+        ----------
+        environment: list
+            The input environment matrix
+                        
+        agents: list
+            The list of agents
+                        
+        ID: float
+            The ID of agents
+                        
+        y: float, optional (default=None)
+            The position of the agent in y axis
+                        
+        x: float, optional (default=None)
+            The position of the agent in x axis
+        """
+        self.environment = environment # environment input
+        self.store = 0 # initial store input
         
         # Agent position initializing based on the environment size
-        self.y = random.randint(0,len(environment))
-        self.x = random.randint(0,len(environment[0]))
+        if (y == None): # no input -- randomization
+            self.y = random.randint(0,len(environment))
+        else: # input
+            self.y = y
+        if (x == None):# no input -- randomization
+            self.x = random.randint(0,len(environment[0]))
+        else: # input
+            self.x = x
+
+        self.agents = agents # agent list input
+        self.ID = ID # agent ID input
+        self.state = 1 # the state of this sheep, "1" means the sheep is alive, 0 means the sheep is dead 
         
-        self.agents = agents
-        self.ID = ID
+    def move(self,times_for_move,store_average):
+        """
+        Alter agent's position randomly
+        Sheep move more quickly if their store is "times_for_move" times the average storage
+        Store is high --> move 2 units each step
+        Store is low --> move 1 unit each step
+        Agents that leave the top of an area come in at the bottom, and come in on the right when they leave left. 
+        This effectively makes the space into a giant doughnut shape, or "torus".
         
-    # Alter agent's position randomly
-    def move(self):
-        # Alter agent's x position
-        if random.random() < 0.5:
-            self.x = (self.x + 1) % len(self.environment[0])
-        else:
-            self.x = (self.x - 1) % len(self.environment[0])
-        
-        # Alter agent's y position
-        if random.random() < 0.5:
-            self.y = (self.y + 1) % len(self.environment)
-        else:
-            self.y = (self.y - 1) % len(self.environment)
+        Parameters
+        ----------
+        times_for_move: float
+            The threshold that we defined to move faster
+                        
+        store_average: float
+            Average store of all agents
+        """
+        if self.store > times_for_move * store_average: # store is high --> move 2 units each step
+            # Alter agent's x position
+            if random.random() < 0.5:
+                self.x = (self.x + 2) % len(self.environment[0])
+            else:
+                self.x = (self.x - 2) % len(self.environment[0])
+            # Alter agent's y position
+            if random.random() < 0.5:
+                self.y = (self.y + 2) % len(self.environment)
+            else:
+                self.y = (self.y - 2) % len(self.environment)
+        else: # store is low --> move 1 unit each step
+            # Alter agent's x position
+            if random.random() < 0.5:
+                self.x = (self.x + 1) % len(self.environment[0])
+            else:
+                self.x = (self.x - 1) % len(self.environment[0])
+            
+            # Alter agent's y position
+            if random.random() < 0.5:
+                self.y = (self.y + 1) % len(self.environment)
+            else:
+                self.y = (self.y - 1) % len(self.environment)
 ```
 
 We visualize the environment and agents together, then we can find that agents can wander around the full environment.
 
 <img src="testfigure/environment_agents_size.png" alt="environment_agents_size" style="zoom:72%;" />
 
----
+#### Test 7: Modify the rule to obtain store from environment.
 
-**Test 7**: When  there's less than 10 left, the agent will only eat the last few bits, without leaving negative values. In addition, the agents will sick up their store in a location if they've been greedy guts and eaten more than 100 units. The code in `Agents` class is shown below.
+When there's less than 10 left, the agent will only eat the last few bits, without leaving negative values. In addition, the agents will sick up their store in a location if they've been greedy guts and eaten more than 100 units. The code in `Agents` class is shown below.
 
 ```python
-    # Eat the environmeny, the agent will not leave negative values and sick up their store
     def eat(self):
-        if self.environment[self.y][self.x] > 10:
+        """
+        Eat the environment, the agent will not leave negative values and sick up their store
+        Sheep return store under insufficient environmental store
+        Sheep return store if they have too much (>=100)
+        """
+        if self.environment[self.y][self.x] > 10: # eat normally, +10
             self.environment[self.y][self.x] -= 10
             self.store += 10
-        else:
+        else: # Insufficient environmental store, sheep return store  
             self.store += self.environment[self.y][self.x]
             self.environment[self.y][self.x] = 0
-        if self.store >= 100:
+        if self.store >= 100: # sheep return store if they have too much (>=100)
             self.environment[self.y][self.x] += 100
             self.store = 0
 ```
 
-## Seventh module -- Communicating
+### Seventh class -- Communicating
 
-**Test 1**: The agent list will be stored in all agents so that they can communicate with each other. The code in `Agents` class is shown below.
+#### Test 1: Save the information of all agents in each agent.
+
+The agent list will be stored in all agents so that they can communicate with each other. The code in `Agents` class is shown below.
 
 ```python
-    # Agent setting
-    def __init__(self,environment,agents,ID):
-        self.environment = environment
-        self.store = 0
+    def __init__(self,environment,agents,ID,y = None,x = None):
+        """
+        Agent setting (define)
+        Position will be random if do not input y and x, that is, type "agentframework.Agent(environment,agents,ID)"
+        
+        Parameters
+        ----------
+        environment: list
+            The input environment matrix
+                        
+        agents: list
+            The list of agents
+                        
+        ID: float
+            The ID of agents
+                        
+        y: float, optional (default=None)
+            The position of the agent in y axis
+                        
+        x: float, optional (default=None)
+            The position of the agent in x axis
+        """
+        self.environment = environment # environment input
+        self.store = 0 # initial store input
         
         # Agent position initializing based on the environment size
-        self.y = random.randint(0,len(environment))
-        self.x = random.randint(0,len(environment[0]))
-        
-        self.agents = agents
-        self.ID = ID
+        if (y == None): # no input -- randomization
+            self.y = random.randint(0,len(environment))
+        else: # input
+            self.y = y
+        if (x == None):# no input -- randomization
+            self.x = random.randint(0,len(environment[0]))
+        else: # input
+            self.x = x
+
+        self.agents = agents # agent list input
+        self.ID = ID # agent ID input
+        self.state = 1 # the state of this sheep, "1" means the sheep is alive, 0 means the sheep is dead 
 ```
 
 We then test the original information of `Agent 1` and the information about `Agent 1` from `Agent 0`. The code is shown below.
@@ -819,31 +1047,66 @@ This is the information of Agent 1 from Agent 0: ID = 1, x=132, y=20, store=0`
 
 ---
 
-**Test 2**: Within the required distance, two agents will share the stores with each other, and the code in `Agents` class is shown below, where `distance_between` is the function to measure the distance, and `share_with_neighbours` is the function to share the store with each other. In function `share_with_neighbours`, each agent will not share the store with itself by setting `self.ID != agent.ID`.
+#### Test 2: Two agents can share the store within the required distance.
+
+Within the required distance, two agents will share the stores with each other, and the code in `Agents` class is shown below, where `distance_between` is the function to measure the distance, and `share_with_neighbours` is the function to share the store with each other. In function `share_with_neighbours`, each agent will not share the store with itself by setting `self.ID != agent.ID`.
 
 ```python
-    # Measure the distance between two agents
     def distance_between(self, agent):
-        return (((self.x - agent.x)**2) + ((self.y - agent.y)**2))**0.5
+        """
+        Obtain the distance between current agent with another agent based on the Euclidean Distance
+        
+        Parameters
+        ----------
+        agent: agentframework.Agent
+            The framework of one agent
+            
+        Returns
+        -------
+        distance_obtain: float
+            The distance between two agents based on Euclidean distance
+        """
+        distance_obtain = (((self.x - agent.x)**2) + ((self.y - agent.y)**2))**0.5
+        return distance_obtain
     
-    # Share the stores with neighbour agents
     def share_with_neighbours(self, neighbourhood):
-        for agent in self.agents:
-            if self.ID != agent.ID:
-                dist = self.distance_between(agent)
-                if dist <= neighbourhood:
-                    print("Original store for Agent A is " + str(self))
-                    print("Original store for Agent B is " + str(agent))
-                    OverallStore = self.store + agent.store
-                    AveStore = OverallStore /2
-                    self.store = AveStore
-                    agent.store = AveStore
-                    
-                    # Uncomment next line to print the information from two agents that share the stores
-                    print("The distance between Agents " + str(self) + " Agents " + str(agent) \
-                          + " is " + str(dist) \
-                          + ", so they can share the store within the distance " + str(neighbourhood) \
-                          + ", and the average store should be " + str(AveStore))
+        """
+        Share the stores with neighbour agents within the distance "neighbourhood"
+        The agent with lower store can steal more resources (3/4 of the overall store) from the other one
+        The agent with higher store can only obtain the minor part (1/4) of the overall store
+        If two agents have the same store, both of them obtain 1/2 of the overall store
+        
+        Parameters
+        ----------
+        neighbourhood: float
+            The distance that agents can share the stores
+        """
+        for agent in self.agents: # each agent
+            if self.ID != agent.ID: # non-self
+                if agent.state == 1: # Only two living sheep can share
+                    dist = self.distance_between(agent) # obtain the distance between them, refer to the function "distance_between"
+                    if dist <= neighbourhood: # share within the distance
+#                        # Uncomment next lines to show the store for two agents
+#                        print("Original store for Agent A is " + str(self))
+#                        print("Original store for Agent B is " + str(agent))
+                        OverallStore = self.store + agent.store # Overall store
+                        
+                        # Agents with lower store can steal more resources (3/4) from others
+                        if self.store > agent.store:
+                            agent.store = 3 * OverallStore / 4
+                            self.store = OverallStore / 4
+                        if self.store < agent.store:
+                            agent.store = OverallStore / 4
+                            self.store = 3 * OverallStore / 4
+                        else: # the store of two agents is the same
+                            agent.store = OverallStore / 2
+                            self.store = OverallStore / 2
+    
+                        # Uncomment next line to print the information from two agents that share the stores
+                        print("The distance between Agents " + str(self) + " Agents " + str(agent) \
+                              + " is " + str(dist) \
+                              + ", so they can share the store within the distance " + str(neighbourhood) \
+                              + ", and the average store should be " + str(OverallStore / 2))
 ```
 
 Part of the output is shown below. We can find `Agent 6` and `Agent 9` share their stores because the distance between them `15.297058540778355` is less than `20`. The store for each agent is `10` and `0` before sharing, and the average store after sharing is `5`. Thus, this function works in the `Agents` class.
@@ -854,12 +1117,14 @@ The distance between Agents ID = 6, x=72, y=257, store=5.0 Agents ID = 9, x=75, 
 
 ---
 
-**Test 3**: We randomise the order in which agents are processed each iteration, and the code is below. We print the agent in each iteration to see if the order is random.
+#### Test 3: Randomize the order of agents to take action in each iteration. 
+
+We randomize the order in which agents are processed each iteration, and the code is below. We print the agent in each iteration to see if the order is random.
 
 ```python
-# Move the agents.
-for j in range(num_of_iterations):
-    # Uncomment next line to randomise the order of agents
+for j in range(num_of_iterations): # each iteration
+    # Uncomment next line to randomise the order of agents if you want
+    # and you can also uncomment the code block below to obtain the normal order
     random.shuffle(agents)
     
     # Uncomment next line to print the step of the movement
@@ -889,7 +1154,9 @@ ID = 4, x=182, y=243, store=10`
 
 ---
 
-**Test 4**: In order to read model parameters from the command line using `argv`, we need `import sys` first.
+#### Test 4: Input values of parameters from the command line using `argv`.
+
+In order to read model parameters from the command line using `argv`, we need `import sys` first.
 
 ```python
 import sys
@@ -898,9 +1165,11 @@ import sys
 The model parameters will be set as follow, so that the model can read  parameters from the command line.
 
 ```python
-num_of_agents = int(sys.argv[1])
-num_of_iterations = int(sys.argv[2])
-neighbourhood = int(sys.argv[3])
+# Uncomment next lines to read model parameters from the command line
+# The input will replace the value given above, so do not need to comment in lines above
+num_of_agents = int(sys.argv[1]) # Number of sheep
+num_of_iterations = int(sys.argv[2]) # Number of iterations
+neighbourhood = int(sys.argv[3]) # Sheep share store with neighbor sheep within this distance "neighbourhood"
 ```
 
 In command line, we input this command,
@@ -920,38 +1189,51 @@ It is 7 step
 It is 8 step
 It is 9 step`
 
-## Eighth module -- Animation/Behaviour
+### Eighth class -- Animation/Behaviour
 
-**Test 1**: Some agents can steal more resources from others if their store are low. In the `Agents` class, these agents with lower store can steal more resources from others, that is, 3/4 of the total stores of two agents. The code is below.
+#### Test 1: Agents with lower store can steal more resources from others.
+
+Some agents can steal more resources from others if their store are low. In the `Agents` class, these agents with lower store can steal more resources from others, that is, 3/4 of the total stores of two agents. The code is below.
 
 ```python
-    # Share the stores with neighbour agents
     def share_with_neighbours(self, neighbourhood):
-        for agent in self.agents:
-            if self.ID != agent.ID:
-                dist = self.distance_between(agent)
-                if dist <= neighbourhood:
-                    print("Original store for Agent A is " + str(self))
-                    print("Original store for Agent B is " + str(agent))
-                    OverallStore = self.store + agent.store
-                    
-                    # Agents with lower store can steal more resources (3/4) from others
-                    if self.store > agent.store:
-                        agent.store = 3 * OverallStore / 4
-                        self.store = OverallStore / 4
-                    if self.store < agent.store:
-                        agent.store = OverallStore / 4
-                        self.store = 3 * OverallStore / 4
-                    else:
-                        agent.store = OverallStore / 2
-                        self.store = OverallStore / 2
-
-                    # Uncomment next line to print the information from two agents that share the stores
-                    print("The distance between Agents " + str(self) + " Agents " + str(agent) \
-                          + " is " + str(dist) \
-                          + ", so they can share the store within the distance " + str(neighbourhood) \
-                          + ", and the average store should be " + str(OverallStore / 2))
-              
+        """
+        Share the stores with neighbour agents within the distance "neighbourhood"
+        The agent with lower store can steal more resources (3/4 of the overall store) from the other one
+        The agent with higher store can only obtain the minor part (1/4) of the overall store
+        If two agents have the same store, both of them obtain 1/2 of the overall store
+        
+        Parameters
+        ----------
+        neighbourhood: float
+            The distance that agents can share the stores
+        """
+        for agent in self.agents: # each agent
+            if self.ID != agent.ID: # non-self
+                if agent.state == 1: # Only two living sheep can share
+                    dist = self.distance_between(agent) # obtain the distance between them, refer to the function "distance_between"
+                    if dist <= neighbourhood: # share within the distance
+#                        # Uncomment next lines to show the store for two agents
+#                        print("Original store for Agent A is " + str(self))
+#                        print("Original store for Agent B is " + str(agent))
+                        OverallStore = self.store + agent.store # Overall store
+                        
+                        # Agents with lower store can steal more resources (3/4) from others
+                        if self.store > agent.store:
+                            agent.store = 3 * OverallStore / 4
+                            self.store = OverallStore / 4
+                        if self.store < agent.store:
+                            agent.store = OverallStore / 4
+                            self.store = 3 * OverallStore / 4
+                        else: # the store of two agents is the same
+                            agent.store = OverallStore / 2
+                            self.store = OverallStore / 2
+    
+                        # Uncomment next line to print the information from two agents that share the stores
+                        print("The distance between Agents " + str(self) + " Agents " + str(agent) \
+                              + " is " + str(dist) \
+                              + ", so they can share the store within the distance " + str(neighbourhood) \
+                              + ", and the average store should be " + str(OverallStore / 2))
 ```
 
 Part of the output is below. We can find the store for `Agent A` and `Agent B` is `32.5` and `67.5` before sharing, thus `Agent A` will steal more resources from `Agent B`. The total store of two agents is `100`. Therefore, `Agent A` will obtain `3/4` of the total stores, and it is `75.0` after sharing. `Agent B` has the other `1/4` of the total stores, and it is `25.0` after sharing. So The output below meets our expectation.
@@ -962,24 +1244,40 @@ The distance between Agents ID = 9, x=68, y=267, store=75.0 Agents ID = 6, x=74,
 
 ---
 
-**Test 2**: These agents with more resources will move quicker in our model. In `Agents` class, these agents whose store is `times_for_move` times the average resource `store_average` will move `2` units each time. The definition in `Agents` class is below.
+#### Test 2: Agents with more resources will move quicker.
+
+These agents with more resources will move quicker in our model. In `Agents` class, these agents whose store is `times_for_move` times the average resource `store_average` will move `2` units each time. The definition in `Agents` class is below.
 
 ```python
-    # Alter agent's position randomly
     def move(self,times_for_move,store_average):
-        if self.store > times_for_move * store_average:
+        """
+        Alter agent's position randomly
+        Sheep move more quickly if their store is "times_for_move" times the average storage
+        Store is high --> move 2 units each step
+        Store is low --> move 1 unit each step
+        Agents that leave the top of an area come in at the bottom, and come in on the right when they leave left. 
+        This effectively makes the space into a giant doughnut shape, or "torus".
+        
+        Parameters
+        ----------
+        times_for_move: float
+            The threshold that we defined to move faster
+                        
+        store_average: float
+            Average store of all agents
+        """
+        if self.store > times_for_move * store_average: # store is high --> move 2 units each step
             # Alter agent's x position
             if random.random() < 0.5:
                 self.x = (self.x + 2) % len(self.environment[0])
             else:
                 self.x = (self.x - 2) % len(self.environment[0])
-            
             # Alter agent's y position
             if random.random() < 0.5:
                 self.y = (self.y + 2) % len(self.environment)
             else:
                 self.y = (self.y - 2) % len(self.environment)
-        else:    
+        else: # store is low --> move 1 unit each step
             # Alter agent's x position
             if random.random() < 0.5:
                 self.x = (self.x + 1) % len(self.environment[0])
@@ -996,24 +1294,33 @@ The distance between Agents ID = 9, x=68, y=267, store=75.0 Agents ID = 6, x=74,
 The code in `main.py` is below.
 
 ```python
-# Move the agents.
-for j in range(num_of_iterations):    
+for j in range(num_of_iterations): # each iteration
+    
     # Obtain the average store of all agents before actions
     store_total = 0
     for i in range(num_of_agents):
         store_total += agents[i].store
     store_average = store_total/num_of_agents
+#    # Uncomment next line to print the average store of all agents in this step
+#    print("Average store for step", j, "is", store_average)
     
     # Uncomment next line to print the step of the movement
     print("It is", j, "step")
     
-    for i in range(num_of_agents):
-        agents[i].move(times_for_move,store_average)
-        agents[i].eat()
-        agents[i].share_with_neighbours(neighbourhood)
-        
-        # Uncomment next line to print the position of each agent in each step
-        print(agents[i])
+    # Action of the sheep
+    for i in range(num_of_agents): # each sheep
+        if agents[i].state == 1: # Only living sheep can move, eat, and share
+#            # Uncomment next line to print the position of agent before moving
+#            print("Before moving",agents[i])
+            agents[i].move(times_for_move,store_average) # move
+#            # Uncomment next line to print the position of agent after moving
+#            print("After moving",agents[i])
+            
+            agents[i].eat() # sheep eat the environment, they will not leave negative values and sick up their store
+            agents[i].share_with_neighbours(neighbourhood) # Share the stores with neighbour agents within the distance
+            
+            # Uncomment next line to print the position of each agent in each step
+            print(agents[i])
 ```
 
 The output is below. The average store before Step 1 is `10.0`, and only `Agent 9` has higher stores, that is, `15.0 > 1.1 * 10.0` when `times_for_move = 1.1`, so only `Agent 9` moves 2 units in this step. From the output, it meets our expectation because it is `x=73, y=270` in the first step and it is `x=71, y=268` in the second step. Other agents only move 1 units in this step.
@@ -1044,24 +1351,47 @@ ID = 9, x=71, y=268, store=30.0`
 
 ---
 
-**Test 3**: There will be wolves to eat nearby sheep. Here, the `Wolves` class is defined, and the initial position for wolves is also random (in `__init__` function). They will move quicker than sheep (`unit_step` each iteration) in `move` function. When the distance between wolf and sheep is close than `required_distance`, this sheep will be eaten (in `find_eat` function). When one wolf has eaten more than `wolves_dead_criterion` sheep, this wolf will die. There is a `state` to represent if it is alive. `state = 1` represents the wolf is alive and `state = 0` represents wolf is dead. There will be `new_wolves_partion * alive_number` new wolves born from the living wolves each `born_iteration_wolves` iterations. <u>**Here, we still keep the dead wolves and sheep instead of deleting them, in order to save the position of all wolves and sheep. However, the state of dead wolves and sheep is `0`.**</u>
+#### Test 3: Sheep can be eaten by wolves.
+
+There will be wolves to eat nearby sheep. Here, the `Wolves` class is defined, and the initial position for wolves is also random (in `__init__` function). They will move quicker than sheep (`unit_step` each iteration) in `move` function. When the distance between wolf and sheep is close than `required_distance`, this sheep will be eaten (in `find_eat` function). When one wolf has eaten more than `wolves_dead_criterion` sheep, this wolf will die. There is a `state` to represent if it is alive. `state = 1` represents the wolf is alive and `state = 0` represents wolf is dead. There will be `new_wolves_partion * alive_number` new wolves born from the living wolves each `born_iteration_wolves` iterations. <u>**Here, we still keep the dead wolves and sheep instead of deleting them, in order to save the position of all wolves and sheep. However, the state of dead wolves and sheep is `0`.**</u>
 
 ```python
-# Define for wolves
+# Definition of wolves
 class Wolves():
     
     # Wolves setting
     def __init__(self,wolves,agents,environment,ID):
-        self.y = random.randint(0,len(environment))
-        self.x = random.randint(0,len(environment[0]))
-        self.eatSheep = 0
-        self.environment = environment
-        self.wolves = wolves
-        self.agents = agents
-        self.ID = ID
-        self.state = 1 # "1" means the sheep is alive, 0 means the sheep is dead 
+        """
+        Agent setting (define)
+        Position will be random if do not input y and x, that is, type "agentframework.Agent(environment,agents,ID)"
+        
+        Parameters
+        ----------             
+        wolves: list
+            The list of wolves
+                        
+        agents: list
+            The list of sheep
+
+        environment: list
+            The input environment matrix
+            
+        ID: float
+            The ID of wolves
+        """
+        self.y = random.randint(0,len(environment)) # Agent y position initializing (randomization) based on the environment size
+        self.x = random.randint(0,len(environment[0])) # Agent x position initializing (randomization) based on the environment size
+        self.eatSheep = 0 # The number of sheep that this wolf has already eaten (it is 0 at the beginning)
+        self.environment = environment  # environment input
+        self.wolves = wolves # wolves list input
+        self.agents = agents # sheep list input
+        self.ID = ID # agent ID
+        self.state = 1 # the state of this wolf, "1" means the sheep is alive, 0 means the sheep is dead 
 
     def __str__(self):
+        """
+        print the information of the wolf, including ID, x and y positio, as well as the number of sheep that this wolf has already eaten
+        """
         return "ID = " + str(self.ID) \
                 + ", x=" + str(self.x) \
                 + ", y=" + str(self.y) \
@@ -1069,67 +1399,99 @@ class Wolves():
                 
     # Alter wolves' position randomly
     def move(self,unit_step):
-        # Alter agent's x position
+        """
+        Alter wolf's position randomly
+        wolf move "unit_step" units each step
+        Agents that leave the top of an area come in at the bottom, and come in on the right when they leave left. 
+        This effectively makes the space into a giant doughnut shape, or "torus".
+        
+        Parameters
+        ----------
+        unit_step: float
+            The wolf moves "unit_step" units each step
+        """
+        # Alter wolf's x position
         if random.random() < 0.5:
             self.x = (self.x + unit_step) % len(self.environment[0])
         else:
             self.x = (self.x - unit_step) % len(self.environment[0])
         
-        # Alter agent's y position
+        # Alter wolf's y position
         if random.random() < 0.5:
             self.y = (self.y + unit_step) % len(self.environment)
         else:
             self.y = (self.y - unit_step) % len(self.environment)
             
-    # Measure the distance between two agents
     def distance_between(self, agent):
-        return (((self.x - agent.x)**2) + ((self.y - agent.y)**2))**0.5
+        """
+        Obtain the distance between current wolf and one sheep based on the Euclidean Distance
+        
+        Parameters
+        ----------
+        agent: agentframework.Agent
+            The framework of one sheep
+            
+        Returns
+        -------
+        distance_obtain: float
+            The distance between one wolf and one sheep based on Euclidean distance
+        """
+        distance_obtain = (((self.x - agent.x)**2) + ((self.y - agent.y)**2))**0.5
+        return distance_obtain
 
-    # Eat sheep when sheep are close to this Wolf
     def find_eat(self, required_distance):
-        for agent in self.agents:
-            if agent.state == 1 and self.state == 1:
-                if self.distance_between(agent) <= required_distance:
-                    # Wolf eat sheep
-                    self.eatSheep += 1
-                    # Sheep dies
-                    agent.state = 0
-                    # Uncomment next lines to show the distance between Wolf and sheep
-                    print("Wolf: " + str(self.ID) \
-                          + ", Sheep: " + str(agent.ID) \
-                          + ", Distance: " + str(self.distance_between(agent))
-                          )
+        """
+        Wolf eats sheep when sheep are close to this Wolf (within the distance "required_distance")
+        
+        Parameters
+        ----------
+        required_distance: float
+            The distance that the wolf can eat the sheep
+        """
+        for agent in self.agents: # each sheep
+            if agent.state == 1 and self.state == 1: # if sheep and wolf are alive
+                if self.distance_between(agent) <= required_distance: # within the distance
+                    self.eatSheep += 1 # This wolf eat sheep
+                    agent.state = 0 # Sheep dies
+                    
+#                    # Uncomment next lines to show the distance between Wolf and sheep
+#                    print("Wolf: " + str(self.ID) \
+#                          + ", Sheep: " + str(agent.ID) \
+#                          + ", Distance: " + str(self.distance_between(agent))
+#                          )
 ```
 
 The setting in `main.py` is shown below.
 
 ```python
-	# Move the wolves
-    for i in range(num_of_wolves):
+    # Action of the wolves
+    for i in range(num_of_wolves): # each wolf
         # If eat more than 'wolves_dead_criterion' sheep, this wolf will die
         if wolves[i].eatSheep >= wolves_dead_criterion:
-            wolves[i].state = 0
+            wolves[i].state = 0 # die
         
-        # Wolf eats and moves
+        # living wolf eats and moves
         if wolves[i].state == 1:
-            wolves[i].move(unit_step_wovle)
-            wolves[i].find_eat(required_distance)
+            wolves[i].move(unit_step_wovle) # move
+            wolves[i].find_eat(required_distance) # eat sheep within the distance
             
     # New wolves born
-    if (j + 1) % born_iteration_wolves == 0:
-        # Measure the living sheep
-        alive_number = 0
+    if (j + 1) % born_iteration_wolves == 0: # identify the step that is suitable to born
+        # Measure the number of living wolves
+        alive_number = 0 # initializing
         for i in range(num_of_wolves):
             if wolves[i].state == 1:
                 alive_number += 1
-        # new_number is the new sheep born from the living sheep (rounding)
+        # add_number is the new wolves born from the living wolves (rounding)
         add_number = round(new_wolves_partion * alive_number)
+        # Current (new) number of wolves
         new_num_of_wolves = num_of_wolves + add_number
-        # make the agents
+        # make the position of the new wolves (from "num_of_wolves" to "new_num_of_wolves")
         for i in range(num_of_wolves,new_num_of_wolves,1):
             wolves.append(agentframework.Wolves(wolves,agents,environment,i))
+        # Update the number of wolves
         num_of_wolves = new_num_of_wolves
-#        print("Current total number of sheep is",num_of_agents)
+#        print("Current total number of wolves is",num_of_wolves)
 ```
 
 
@@ -1138,20 +1500,22 @@ Similarly, there is `state` to represent if sheep is alive. `state = 1` represen
 
 ```python
     # New sheep born
-    if (j + 1) % born_iteration_sheep == 0:
-        # Measure the living sheep
-        alive_number = 0
+    if (j + 1) % born_iteration_sheep == 0: # identify the step that is suitable to born
+        # Measure the number of living sheep
+        alive_number = 0 # initializing
         for i in range(num_of_agents):
             if agents[i].state == 1:
                 alive_number += 1
-        # new_number is the new sheep born from the living sheep (rounding)
+        # add_number is the new sheep born from the living sheep (rounding)
         add_number = round(new_sheep_partion * alive_number)
+        # Current (new) number of sheep
         new_num_of_agents = num_of_agents + add_number
-        # make the agents
+        # make the position of the new sheep (from "num_of_agents" to "new_num_of_agents")
         for i in range(num_of_agents,new_num_of_agents,1):
             agents.append(agentframework.Agent(environment,agents,i))
+        # Update the number of sheep
         num_of_agents = new_num_of_agents
-        print("Current total number of sheep is",num_of_agents)
+#        print("Current total number of sheep is",num_of_agents)
 ```
 
 The output of initial position of all wolves and sheep is below (5 wolves and 10 sheep at the beginning).
@@ -1211,23 +1575,25 @@ We then print the final state of all sheep and visualize the position of all she
 matplotlib.pyplot.xlim(0, len(environment[0]))
 matplotlib.pyplot.ylim(0, len(environment))
 matplotlib.pyplot.imshow(environment)
-print("Final states")
-for i in range(num_of_agents):
-    # Uncomment next lines to print the state for all sheep at the end.
-    print("The state for sheep", agents[i].ID, "is", agents[i].state)
+#print("Final states")
+for i in range(num_of_agents): # visualize the sheep
+#    # Uncomment next lines to print the state for all sheep at the end.
+#    print("The state for sheep", agents[i].ID, "is", agents[i].state)
     
-    if agents[i].state == 1:
+    # Living sheep are represented by blue points and dead sheep are represented by red points
+    if agents[i].state == 1: # Living sheep
         matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'blue')
-    else:
+    else: # Dead sheep
         matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'red')
         
-for i in range(num_of_wolves):
-    # Uncomment next lines to print the state for all wolves at the end.
-    print("Wolf", wolves[i].ID, "eated total", wolves[i].eatSheep, "sheep")
+for i in range(num_of_wolves): # visualize the wolves
+#    # Uncomment next lines to print the state for all wolves at the end.
+#    print("Wolf", wolves[i].ID, "eated total", wolves[i].eatSheep, "sheep")
     
-    if wolves[i].state == 1:
+    # Living wolves are represented by black points and dead wolves are represented by yellow points
+    if wolves[i].state == 1: # Living wolves
         matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'black')
-    else:
+    else: # Dead wolves
         matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'yellow')
 matplotlib.pyplot.show()
 ```
@@ -1270,14 +1636,19 @@ For a large number of iteration `num_of_iterations = 100`, the figure is shown b
 
 <img src="testfigure/wolves100.png" alt="wolves100" style="zoom:72%;" />
 
-## Ninth module -- GUI/Web scraping
+### Ninth class -- GUI/Web scraping
 
-**Test 1**: The code below is used to design GUI.
+#### Test 1: GUI design.
+
+The code below is used to design GUI.
 
 ```python
 # =============================================================================
-# # GUI Setting
+# # =============================================================================
+# # # Code below is for GUI Setting
+# # =============================================================================
 # =============================================================================
+    
 # Define the run function
 def run():
     animation = matplotlib.animation.FuncAnimation(fig, update, frames=gen_function, repeat=False)
@@ -1287,59 +1658,134 @@ def run():
 fig = matplotlib.pyplot.figure(figsize=(7, 7))
 ax = fig.add_axes([0, 0, 1, 1])
 
-# GUI design 
+# GUI design setting
 root = tkinter.Tk()
 root.wm_title("Model")
 canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
-
 menu = tkinter.Menu(root)
 root.config(menu=menu)
 model_menu = tkinter.Menu(menu)
 menu.add_cascade(label="Model", menu=model_menu)
 model_menu.add_command(label="Run model", command=run)
 
-# Update rule 
-carry_on = True	
+# Parameters initializing
+carry_on = True # stop or not
+jIteration = 0 # iteration indicator
+
+# update (main) function for Animation
 def update(frame_number):
     
-    fig.clear()   
+    fig.clear()
+    # Parameter globalization 
+    global jIteration
+    global num_of_agents
+    global num_of_wolves
     global carry_on
     
-    # Plot the environment
+    # Plot the environment before agents
     matplotlib.pyplot.xlim(0, len(environment[0]))
     matplotlib.pyplot.ylim(0, len(environment))
     matplotlib.pyplot.imshow(environment)
     
-    # Move the agents, eat the environment, and share with neighbourhood
+    # Obtain the average store of all agents before actions
     store_total = 0
     for i in range(num_of_agents):
         store_total += agents[i].store
     store_average = store_total/num_of_agents
     
-    for i in range(num_of_agents):
-        agents[i].move(times_for_move,store_average)
-        agents[i].eat()
-        agents[i].share_with_neighbours(neighbourhood)
+    # Action of the sheep
+    for i in range(num_of_agents): # each sheep
+        if agents[i].state == 1: # Only living sheep can move, eat, and share
+            agents[i].move(times_for_move,store_average) # move
+            agents[i].eat() # sheep eat the environment, they will not leave negative values and sick up their store
+            agents[i].share_with_neighbours(neighbourhood) # Share the stores with neighbour agents within the distance
+    
+    # Action of the wolves
+    for i in range(num_of_wolves): # each wolf
+        # If eat more than 'wolves_dead_criterion' sheep, this wolf will die
+        if wolves[i].eatSheep >= wolves_dead_criterion:
+            wolves[i].state = 0 # die
+        
+        # Wolf eats and moves
+        if wolves[i].state == 1: # living wolves
+            wolves[i].move(unit_step_wovle) # move
+            wolves[i].find_eat(required_distance) # eat sheep within the distance
+    
+    # New sheep born
+    if (jIteration + 1) % born_iteration_sheep == 0: # identify the step that is suitable to born
+        # Measure the number of living sheep
+        alive_number = 0 # initializing
+        for i in range(num_of_agents):
+            if agents[i].state == 1:
+                alive_number += 1
+        # add_number is the new sheep born from the living sheep (rounding)
+        add_number = round(new_sheep_partion * alive_number)
+        # Current (new) number of sheep
+        new_num_of_agents = num_of_agents + add_number
+        # make the position of the new sheep (from "num_of_agents" to "new_num_of_agents")
+        for i in range(num_of_agents,new_num_of_agents,1):
+            agents.append(agentframework.Agent(environment,agents,i))
+        # Update the number of sheep
+        num_of_agents = new_num_of_agents
+#        print("Current total number of sheep is",num_of_agents)
+    
+    # New wolves born
+    if (jIteration + 1) % born_iteration_wolves == 0:
+        # Measure the number of living wolves
+        alive_number = 0
+        for i in range(num_of_wolves):
+            if wolves[i].state == 1:
+                alive_number += 1
+        # add_number is the new wolves born from the living wolves (rounding)
+        add_number = round(new_wolves_partion * alive_number)
+        # Current (new) number of wolves
+        new_num_of_wolves = num_of_wolves + add_number
+        # make the position of the new wolves (from "num_of_wolves" to "new_num_of_wolves")
+        for i in range(num_of_wolves,new_num_of_wolves,1):
+            wolves.append(agentframework.Wolves(wolves,agents,environment,i))
+        # Update the number of wolves
+        num_of_wolves = new_num_of_wolves
+#        print("Current total number of wolves is",num_of_wolves)
+    
+    jIteration += 1 # iteration + 1 manually
     
     # Stop condiction based on a random number
-    if random.random() < 0.1:
-        carry_on = False
+    if random.random() < 0.001:
+        carry_on = False # stop indicator
         print("stopping condition")
     
-    # Plot the agent
-    for i in range(num_of_agents):
-        matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'red')
+    # Plot the sheep and wolves in this iteration
+    for i in range(num_of_agents): # visualize the sheep
+        # Living sheep are represented by blue points and dead sheep are represented by red points
+        if agents[i].state == 1: # Living sheep
+            matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'blue')
+        else: # Dead sheep
+            matplotlib.pyplot.scatter(agents[i].x,agents[i].y, color = 'red')
+    for i in range(num_of_wolves): # visualize the wolves
+        # Living wolves are represented by black points and dead wolves are represented by yellow points
+        if wolves[i].state == 1: # Living wolves
+            matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'black')
+        else: # Dead wolves
+            matplotlib.pyplot.scatter(wolves[i].x,wolves[i].y, color = 'yellow')
+
 		
-# Stop condition: (1) Step number (2) Random number
+# Stop condition function: (1) Step number (2) Random number
 def gen_function(b = [0]):
     a = 0
-    global carry_on
-    while (a < num_of_iterations) & (carry_on) :
+    global carry_on #Not actually needed as we're not assigning, but clearer
+    while (a < num_of_iterations) & (carry_on) : # two stop conditions
         yield a			# Returns control and waits next call.
         a = a + 1
 
 tkinter.mainloop()
+
+# =============================================================================
+# # =============================================================================
+# # # =============================================================================
+# # # # Code above is for GUI Setting
+# # # =============================================================================
+# # =============================================================================
 ```
 
 GUI is shown below, so that our code is correct.
@@ -1348,10 +1794,13 @@ GUI is shown below, so that our code is correct.
 
 ---
 
-**Test 2**: To read the position of agents from website, we test the code below.
+#### Test 2: Read the position of agents from website.
+
+To read the position of agents from website, we test the code below.
 
 ```python
 # Uncomment next lines to read the agent position from website
+# Please comment in "Make the sheep" code bloak above if you want to read position from website (this code block)
 r = requests.get('http://www.geog.leeds.ac.uk/courses/computing/practicals/python/agent-framework/part9/data.html')
 content = r.text
 soup = bs4.BeautifulSoup(content, 'html.parser')
@@ -1369,24 +1818,44 @@ for i in range(num_of_agents):
 The definition in the `Agents` class is below.
 
 ```python
-    # Agent setting
-    # Position will be random if do not provide y and x
     def __init__(self,environment,agents,ID,y = None,x = None):
-        self.environment = environment
-        self.store = 0
+        """
+        Agent setting (define)
+        Position will be random if do not input y and x, that is, type "agentframework.Agent(environment,agents,ID)"
+        
+        Parameters
+        ----------
+        environment: list
+            The input environment matrix
+                        
+        agents: list
+            The list of agents
+                        
+        ID: float
+            The ID of agents
+                        
+        y: float, optional (default=None)
+            The position of the agent in y axis
+                        
+        x: float, optional (default=None)
+            The position of the agent in x axis
+        """
+        self.environment = environment # environment input
+        self.store = 0 # initial store input
         
         # Agent position initializing based on the environment size
-        if (y == None):
+        if (y == None): # no input -- randomization
             self.y = random.randint(0,len(environment))
-        else:
+        else: # input
             self.y = y
-        if (x == None):
+        if (x == None):# no input -- randomization
             self.x = random.randint(0,len(environment[0]))
-        else:
+        else: # input
             self.x = x
 
-        self.agents = agents
-        self.ID = ID
+        self.agents = agents # agent list input
+        self.ID = ID # agent ID input
+        self.state = 1 # the state of this sheep, "1" means the sheep is alive, 0 means the sheep is dead 
 ```
 
 The output of this code is below, and we can find it is the same as the data in the website. Thus, this code is correct.
