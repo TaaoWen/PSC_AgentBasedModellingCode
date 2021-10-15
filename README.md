@@ -10,6 +10,8 @@ The website that introduces this code is [here](https://taaowen.github.io/ABM.ht
 
 ## Mathematic Model
 
+Note: You **NEED** to install [MathJax Plugin for Github](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima/related) in Chrome to read the math formulates in GitHub. You can also access math formulates by other ways if you can.
+
 Before illustrating how to simulate, the mathematic model is introduced first. There are two types of species, that is, sheep $S = [s_1, s_2, ..., s_n]$ and wolves $W = [w_1,w_2,...,w_m]$, where the numbers of sheep and wolves are $n$ and $m$ respectively. All species are given in the environment ${E_{\left| N \right| \times \left| N \right|}} = \left[ {\begin{array}{*{20}{c}}
 {{e_{11}}}& \cdots & \cdots &{{e_{1\left| N \right|}}}\\
  \vdots & \ddots & \cdots & \vdots \\
