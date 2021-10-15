@@ -4,6 +4,51 @@ This code is only used as the practicals (Agent Based Modelling) for the module 
 
 The website that introduces this code is [here](https://taaowen.github.io/ABM.html).
 
+
+
+- [Programming for Social Science](#programming-for-social-science)
+  * [Mathematic Model](#mathematic-model)
+  * [Basic Introduction](#basic-introduction)
+  * [Appendix - Test results](#appendix---test-results)
+    + [First class -- Agent Based Modelling](#first-class----agent-based-modelling)
+      - [Test 1: Identify the initial position of each agent.](#test-1--identify-the-initial-position-of-each-agent)
+      - [Test 2: Find the position of each agent in each iteration after random movement.](#test-2--find-the-position-of-each-agent-in-each-iteration-after-random-movement)
+      - [Test 3: Measure the distance based on function `distance_between`.](#test-3--measure-the-distance-based-on-function--distance-between-)
+    + [Second class -- Code shrinking I](#second-class----code-shrinking-i)
+      - [Test 1: Find the agent with the largest `x` (furthest east) position.](#test-1--find-the-agent-with-the-largest--x---furthest-east--position)
+    + [Third class -- Code shrinking II](#third-class----code-shrinking-ii)
+      - [Test 1: Reduce the code size by using for-loops.](#test-1--reduce-the-code-size-by-using-for-loops)
+    + [Fourth class -- Building tools](#fourth-class----building-tools)
+      - [Test 1: Obtain the timing for calculating the distance between agents based on function `calculate_distance_0`.](#test-1--obtain-the-timing-for-calculating-the-distance-between-agents-based-on-function--calculate-distance-0-)
+      - [Test 2: Obtain the timings for calculating the distance between agents based on function `calculate_distance_1` and `calculate_distance_2`.](#test-2--obtain-the-timings-for-calculating-the-distance-between-agents-based-on-function--calculate-distance-1--and--calculate-distance-2-)
+      - [Test 3: Obtain the timings for measuring the distance between agents based on different functions under different number of agents, and compare it by visualizing.](#test-3--obtain-the-timings-for-measuring-the-distance-between-agents-based-on-different-functions-under-different-number-of-agents--and-compare-it-by-visualizing)
+    + [Fifth class -- Agents!](#fifth-class----agents-)
+      - [Test 1: Test if the `Agents` class can move the agent based on `random.random()`.](#test-1--test-if-the--agents--class-can-move-the-agent-based-on--randomrandom---)
+    + [Sixth Class -- I/O](#sixth-class----i-o)
+      - [Test 1: Test if the environment can be input from text file by visualizing.](#test-1--test-if-the-environment-can-be-input-from-text-file-by-visualizing)
+      - [Test 2: Visualize the environment and agents simultaneously.](#test-2--visualize-the-environment-and-agents-simultaneously)
+      - [Test 3: Output the environment into a text file.](#test-3--output-the-environment-into-a-text-file)
+      - [Test 4: Output the total amount stored by all the agents into a text file.](#test-4--output-the-total-amount-stored-by-all-the-agents-into-a-text-file)
+      - [Test 5: Print the location and stores of each agent by `__str__(self)`.](#test-5--print-the-location-and-stores-of-each-agent-by----str---self--)
+      - [Test 6: Randomize the initial position of agents and deal with the boundary conditions by the environment size.](#test-6--randomize-the-initial-position-of-agents-and-deal-with-the-boundary-conditions-by-the-environment-size)
+      - [Test 7: Modify the rule to obtain store from environment.](#test-7--modify-the-rule-to-obtain-store-from-environment)
+    + [Seventh class -- Communicating](#seventh-class----communicating)
+      - [Test 1: Save the information of all agents in each agent.](#test-1--save-the-information-of-all-agents-in-each-agent)
+      - [Test 2: Two agents can share the store within the required distance.](#test-2--two-agents-can-share-the-store-within-the-required-distance)
+      - [Test 3: Randomize the order of agents to take action in each iteration.](#test-3--randomize-the-order-of-agents-to-take-action-in-each-iteration)
+      - [Test 4: Input values of parameters from the command line using `argv`.](#test-4--input-values-of-parameters-from-the-command-line-using--argv-)
+    + [Eighth class -- Animation/Behaviour](#eighth-class----animation-behaviour)
+      - [Test 1: Agents with lower store can steal more resources from others.](#test-1--agents-with-lower-store-can-steal-more-resources-from-others)
+      - [Test 2: Agents with more resources will move quicker.](#test-2--agents-with-more-resources-will-move-quicker)
+      - [Test 3: Sheep can be eaten by wolves.](#test-3--sheep-can-be-eaten-by-wolves)
+    + [Ninth class -- GUI/Web scraping](#ninth-class----gui-web-scraping)
+      - [Test 1: GUI design.](#test-1--gui-design)
+      - [Test 2: Read the position of agents from website.](#test-2--read-the-position-of-agents-from-website)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
+
 [toc]
 
 ---
@@ -13,10 +58,9 @@ The website that introduces this code is [here](https://taaowen.github.io/ABM.ht
 Note: You **NEED** to install [MathJax Plugin for Github](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima/related) in Chrome to read the math formulates in GitHub. You can also access math formulates by other ways if you can.
 
 Before illustrating how to simulate, the mathematic model is introduced first. There are two types of species, that is, sheep $S = [s_1, s_2, ..., s_n]$ and wolves $W = [w_1,w_2,...,w_m]$, where the numbers of sheep and wolves are $n$ and $m$ respectively. All species are given in the environment ${E_{\left| N \right| \times \left| N \right|}} = \left[ {\begin{array}{*{20}{c}}
-{{e_{11}}}& \cdots & \cdots &{{e_{1\left| N \right|}}}\\
- \vdots & \ddots & \cdots & \vdots \\
- \vdots & \cdots &{{e_{ij}}}& \vdots \\
-{{e_{\left| N \right|1}}}& \cdots & \cdots &{{e_{\left| N \right|\left| N \right|}}}
+{{e_{11}}}& \cdots &{{e_{1\left| N \right|}}}\\
+ \vdots &{{e_{ij}}}& \vdots \\
+{{e_{\left| N \right|1}}}& \cdots &{{e_{\left| N \right|\left| N \right|}}}
 \end{array}} \right]$, where $e_{ij}$ represents the store of environment and the size of environment is $\left| N \right| \times \left| N \right|$. The details of our model are given below. (**All <u>*Options*</u> have been done in our code, but users need to uncomment specific code blocks to simulate it. Please refer to two python files for more details.**)
 
 1. Parameter initializing: $n=10$ and $m = 5$. Other parameters are introduced later. (*<u>Option</u>*: Some values can be input by users in Command Line.)
