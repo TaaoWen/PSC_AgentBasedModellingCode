@@ -2,7 +2,7 @@
 
 This code is only used as the practicals (Agent Based Modelling) for the module "[Programming for Social Science](https://www.geog.leeds.ac.uk/courses/computing/study/core-python-phd/)". More information about this assessment can be found [here](https://www.geog.leeds.ac.uk/courses/computing/study/core-python-phd/assessment1/index.html).
 
-The website that introduces this code is [here](https://taaowen.github.io/ABM.html).
+The website that introduces this code is [here](https://taaowen.github.io/ABM.html), where the website code can be found [here](https://github.com/TaaoWen/taaowen.github.io/blob/master/ABM.html).
 
 - [Programming for Social Science](#programming-for-social-science)
   * [Mathematic Model](#mathematic-model)
@@ -113,12 +113,14 @@ Please refer to Mathematic Model Section for the details about the action and de
 
 **How to run the software and what to expect when it is run:**
 
-There are 4 parts in `main.py`. The initial parameter setting, functions, and `Agents` class can be used in all 3 parts (1 Basic figures, 2 Animation, and 3 GUI design).
+There are 4 parts in `main.py`. The (1) initial parameter setting, functions, and `Agents` class can be used in all 3 parts -- (2) Basic figures, (3) Animation, and (4) GUI design.
 
 1. **Initial setting**: All initial information about agents and environment are set here and users do not need to change it if they want to use the default value.
 2. **Basic figures**: Users only need to click 'Run files' or `F5` to run this part (uncomment this code block first). Users can obtain the final visualized figure that shows the environment and positions of sheep and wolves (with a different color). Users can also obtain the environment after modelling and the total amount stored by all the agents at each step in `.txt` files by uncommenting some lines based on the introduction in `main.py`. Please uncomment all codes between `Code below is for Basic figures` and `Code above is for Basic figures` when users want to run this part of the code.
 3. **Animation**: Users only need to click 'Run files' or `F5` to run this part  (uncomment this code block first). Users can get a GIF of agents (wolves and sheep) moving in the environment that shows agents’ movement and state, as well as the amount of grass at each point. Please uncomment all codes between `Code below is for Animation` and `Code above is for Animation` when users want to run this part of the code.
 4. **GUI design**: Users only need to click 'Run files' to run this part. The same results in "Animation" can be obtained, but users need to click 'Run model' in GUI. Please uncomment all codes between `Code below is for GUI Setting` and `Code above is for GUI Setting` when users want to run this part of the code. In addition, users need to use `Tkinter` and can refer to this [introduction](https://www.geog.leeds.ac.uk/courses/computing/practicals/python/agent-framework/part9/index.html) to set.
+
+**Please only run one part of code once, that is, uncommenting and running (2) Basic figures, (3) Animation, and (4) GUI design separately.** Most of outcomes and tests are given in (2) Basic figures.
 
 If there are any questions about running the code, please contact me at taaowen@gmail.com.
 

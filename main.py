@@ -27,7 +27,7 @@ import time
 import tkinter
 import matplotlib
 # Please uncomment next line to design GUI, but comment in the next line for other figures and outcomes
-#matplotlib.use('TkAgg')
+matplotlib.use('TkAgg')
 import matplotlib.pyplot
 import matplotlib.animation
 import agentframework
